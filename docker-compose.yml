@@ -1,0 +1,17 @@
+# WARNING: this file is not suitable for production, please use with caution
+version: '3'
+
+services:
+  web:
+    image: autoshop
+    build: .
+    command: autoshop run -h 0.0.0.0
+    env_file:
+      - ./.flaskenv
+    environment:
+      - DATABASE_URI=sqlite:////db/autoshop.db
+    volumes:
+      - ./autoshop:/code/autoshop
+      - ./db/:/db/
+    ports:
+      - "5000:5000"
