@@ -20,7 +20,7 @@ test:
   - source venv/bin/activate
   script:
   - pip install tox
-  #- tox
+  - tox
 
 build:
   image: docker:stable
