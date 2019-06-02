@@ -27,7 +27,6 @@ class CustomerSchema(ma.ModelSchema):
         required=True,
     )
 
-
     class Meta:
         model = Customer
         sqla_session = db.session
@@ -98,7 +97,9 @@ class CustomerList(Resource):
 
             if not Entity.get(uuid=customer.entity_id):
                 return {"msg": "The supplied entity id does not exist"}, 422
-            if not CustomerType.get(uuid=customer.type_id, entity_id=customer.entity_id):
+            if not CustomerType.get(
+                uuid=customer.type_id, entity_id=customer.entity_id
+            ):
                 return {"msg": "The supplied customer type does not exist"}, 422
             if Customer.get(phone=customer.phone, entity_id=customer.entity_id):
                 return {"msg": "The supplied customer phone already exists"}, 409

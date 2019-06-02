@@ -1,6 +1,6 @@
 from flask_jwt_extended import get_jwt_identity
 
-from autoshop.extensions import db, pwd_context
+from autoshop.extensions import db
 from autoshop.models.account import Account
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
@@ -21,6 +21,7 @@ class Setting(db.Model, BaseMixin, AuditableMixin):
     def __repr__(self):
         return "<Setting %s>" % self.name
 
+
 class CustomerType(db.Model, BaseMixin, AuditableMixin):
     """"
        in fleet, out fleet
@@ -36,6 +37,7 @@ class CustomerType(db.Model, BaseMixin, AuditableMixin):
 
     def __repr__(self):
         return "<CustomerType %s>" % self.name
+
 
 class TransactionType(db.Model, BaseMixin, AuditableMixin):
     """"

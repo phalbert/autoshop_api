@@ -5,8 +5,8 @@ import string
 from random import choice, randint
 from threading import Thread
 
-from flask import current_app, flash, request, session
-from requests import get, post
+from flask import current_app
+from requests import post
 
 
 def random_pin():

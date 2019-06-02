@@ -3,11 +3,11 @@ from datetime import datetime
 from sqlalchemy import CheckConstraint
 
 from autoshop.commons.dbaccess import query
-from autoshop.extensions import db, pwd_context
+from autoshop.extensions import db
 from autoshop.models import Account, Entity
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
-from autoshop.models.charge import Charge, ChargeSplit, Tarriff
+from autoshop.models.charge import ChargeSplit, Tarriff, get_charge_fee
 
 
 class Entry(db.Model):
@@ -50,13 +50,10 @@ class Entry(db.Model):
         this is the summation of all entries under a category
         """
         sql = (
-            """ name
-	    FROM accounts 
-		INNER JOIN account_holders on account_holders.uuid=accounts.owner_id
-        where accounts.id = """
-            + str(self.debit)
-            + """
-        """
+            """ name FROM accounts INNER JOIN account_holders on
+            account_holders.uuid=accounts.owner_id where accounts.id = """
+            + str(self.debit) + """
+            """
         )
 
         data = query(sql)
@@ -69,13 +66,9 @@ class Entry(db.Model):
         this is the summation of all entries under a category
         """
         sql = (
-            """ name
-	    FROM accounts 
-		INNER JOIN account_holders on account_holders.uuid=accounts.owner_id
-        where accounts.id = """
-            + str(self.credit)
-            + """
-        """
+            """ name FROM accounts INNER JOIN account_holders on
+            account_holders.uuid=accounts.owner_id where accounts.id =
+            """ + str(self.credit) + """ """
         )
 
         data = query(sql)
@@ -167,7 +160,7 @@ class Entry(db.Model):
                 )
 
             send_sms_async(phone, msg)
-        except Exception as e:
+        except Exception:
             pass
 
 

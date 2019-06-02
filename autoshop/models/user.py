@@ -49,7 +49,7 @@ class User(db.Model, BaseMixin, AuditableMixin, PersonMixin):
             else:
                 sql = (
                     """ name
-                FROM account_holders 
+                FROM account_holders
                 where uuid = '"""
                     + self.company_id
                     + """'
@@ -57,7 +57,7 @@ class User(db.Model, BaseMixin, AuditableMixin, PersonMixin):
                 )
                 data = query(sql)
                 return data[0]["name"]
-        except Exception as e:
+        except Exception:
             return ""
 
 

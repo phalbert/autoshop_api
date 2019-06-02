@@ -28,5 +28,5 @@ __all__ = [
     "ChargeSplit",
     "Vehicle",
     "VehicleModel",
-    "VehicleType"
+    "VehicleType",
 ]

@@ -24,11 +24,8 @@ import json
 
 from flask_jwt_extended import get_jwt_identity
 from sqlalchemy import (
-    Boolean,
     Column,
-    Date,
     DateTime,
-    ForeignKey,
     Integer,
     String,
     UnicodeText,
@@ -60,7 +57,7 @@ def _current_user_id_or_none():
     try:
         identity = get_jwt_identity()
         return identity
-    except:
+    except Exception:
         return None
 
 

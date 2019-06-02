@@ -1,6 +1,5 @@
-from sqlalchemy import and_, func, select
+from sqlalchemy import and_
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import column_property
 
 from autoshop.extensions import db
 from autoshop.models import Account

@@ -4,6 +4,9 @@ from flask.cli import FlaskGroup
 from flask import current_app as app
 
 from autoshop.app import create_app
+from autoshop.extensions import db
+from autoshop.commons.dbaccess import execute_sql
+from autoshop.models import User, Role, PaymentType, TransactionType
 
 
 def create_autoshop(info):
@@ -19,8 +22,6 @@ def cli():
 def reset():
     """Drop db and remove migrations
     """
-    from autoshop.extensions import db
-    from autoshop.commons.dbaccess import execute_sql
 
     click.echo("remove migrations and drop db")
     os.system("rm -rf migrations")
@@ -35,8 +36,6 @@ def reset():
 def recreate_views():
     """Drop views and recreate
     """
-    from autoshop.extensions import db
-    from autoshop.commons.dbaccess import execute_sql
 
     fileDir = os.path.dirname(os.path.realpath("__file__"))
     filename = os.path.join(fileDir, "autoshop/sql/views.sql")
@@ -44,17 +43,31 @@ def recreate_views():
     execute_sql(file)
 
 
+@cli.command("strip")
+def strip():
+    paths = ["autoshop/api/resources", "autoshop/models", "autoshop/manage.py"]
+
+    for path in paths:
+        strip_in_path(path)
+
+
+def strip_in_path(PATH):
+    for path, dirs, files in os.walk(PATH):
+        for f in files:
+            file_name, file_extension = os.path.splitext(f)
+            if file_extension == ".py":
+                path_name = os.path.join(path, f)
+                with open(path_name, "r") as fh:
+                    new = [line.rstrip() for line in fh]
+                with open(path_name, "w") as fh:
+                    [fh.write("%s\n" % line) for line in new]
+
+
 @cli.command("init")
 def init():
     """Init application, create database tables
     and create a new user named admin with password admin
     """
-    from autoshop.extensions import db
-    from autoshop.models import ( 
-        User, Role, PaymentType, TransactionType,
-        VehicleType, CustomerType
-    )
-    from autoshop.commons.dbaccess import execute_sql
 
     click.echo("create database")
     db.create_all()
@@ -92,13 +105,6 @@ def init():
         active=True,
         created_by=1,
     )
-    role5 = Role(
-        uuid="entity_user",
-        name="Entity User",
-        category="entity",
-        active=True,
-        created_by=1,
-    )
     role4 = Role(
         uuid="vendor_user",
         name="Vendor User",
@@ -106,7 +112,6 @@ def init():
         active=True,
         created_by=1,
     )
-
 
     pay_type = PaymentType(uuid="momo", name="Mobile Money", active=True, created_by=1)
     pay_type2 = PaymentType(uuid="cash", name="Cash", active=True, created_by=1)
@@ -135,8 +140,6 @@ def init():
 
     pay_type.save()
     pay_type2.save()
- 
-
     db.session.add(tran_type)
     db.session.add(tran_type2)
     db.session.add(tran_type3)

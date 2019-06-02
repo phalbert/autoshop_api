@@ -59,5 +59,5 @@ __all__ = [
     "VehicleResource",
     "VehicleList",
     "VehicleModelResource",
-    "VehicleModelList"
+    "VehicleModelList",
 ]

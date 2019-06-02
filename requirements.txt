@@ -8,4 +8,12 @@ marshmallow-sqlalchemy
 python-dotenv
 passlib
 tox
+
+colors.py
+psycopg2-binary
 psycopg2
+gunicorn
+environs
+requests
+
+

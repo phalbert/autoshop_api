@@ -71,7 +71,9 @@ class VehicleList(Resource):
 
         vehicle.created_by = get_jwt_identity()
 
-        if Vehicle.get(registration_no=vehicle.registration_no, customer_id=vehicle.customer_id):
+        if Vehicle.get(
+            registration_no=vehicle.registration_no, customer_id=vehicle.customer_id
+        ):
             return {"msg": "The supplied vehicle already exists"}, 409
 
         db.session.add(vehicle)

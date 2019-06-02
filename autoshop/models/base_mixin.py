@@ -1,9 +1,7 @@
-import datetime
 import string
 import uuid
-from random import *
+from random import choice, randint
 
-from sqlalchemy.ext.declarative import declared_attr
 
 from autoshop.commons.dbaccess import query
 from autoshop.extensions import db
@@ -62,7 +60,7 @@ class BaseMixin:
         try:
             sql = (
                 """ username
-            FROM users 
+            FROM users
             where users.id = """
                 + str(self.created_by)
                 + """
@@ -70,7 +68,7 @@ class BaseMixin:
             )
             data = query(sql)
             return data if data is None else data[0]["username"]
-        except Exception as e:
+        except Exception:
             return ""
 
     def created_on(self):

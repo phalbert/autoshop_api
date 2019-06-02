@@ -1,4 +1,4 @@
-from autoshop.extensions import db, pwd_context
+from autoshop.extensions import db
 from autoshop.models.account import Account
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
@@ -74,7 +74,7 @@ class Vendor(db.Model, BaseMixin, AuditableMixin):
 
 
 class Group(db.Model, BaseMixin, AuditableMixin):
-    """An entity may have groups: these are companies/departments that 
+    """An entity may have groups: these are companies/departments that
     subscribe to their plans on behalf of their staff"""
 
     name = db.Column(db.String(80), unique=True, nullable=False)

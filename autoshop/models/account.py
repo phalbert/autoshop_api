@@ -1,5 +1,5 @@
 from autoshop.commons.dbaccess import query
-from autoshop.extensions import db, pwd_context
+from autoshop.extensions import db
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
 from autoshop.models.user import User
@@ -51,7 +51,7 @@ class Account(db.Model, BaseMixin, AuditableMixin):
             return query(" balance from account_balances where id=" + str(self.id))[0][
                 "balance"
             ]
-        except Exception as e:
+        except Exception:
             return 0
 
     @property
@@ -60,15 +60,9 @@ class Account(db.Model, BaseMixin, AuditableMixin):
         Get the limits per category..
         this is the summation of all entries under a category
         """
-        sql = (
-            """ name
-	    FROM accounts 
-		INNER JOIN account_holders on account_holders.uuid=accounts.owner_id
-        where accounts.id = """
-            + str(self.id)
-            + """
-        """
-        )
+        sql = (""" name FROM accounts INNER JOIN account_holders on
+        account_holders.uuid=accounts.owner_id where accounts.id =
+        """ + str(self.id) + """""")
 
         data = query(sql)
         return data if data is None else data[0]["name"]
@@ -79,19 +73,12 @@ class Account(db.Model, BaseMixin, AuditableMixin):
         Get the limits per category..
         this is the summation of all entries under a category
         """
-        sql = (
-            """ accounts.id,account_ledgers.category,category.name,
-		    COALESCE(sum(account_ledgers.amount), 0.0) as balance
-	    FROM accounts 
-		LEFT OUTER JOIN account_ledgers
-		ON accounts.id = account_ledgers.account_id
-		INNER JOIN category on category.uuid=account_ledgers.category
-        where accounts.id = """
-            + str(self.id)
-            + """
-	    GROUP BY accounts.id,account_ledgers.category,category.name
-        """
-        )
+        sql = (""" accounts.id,account_ledgers.category,category.name,
+        COALESCE(sum(account_ledgers.amount), 0.0) as balance FROM accounts
+        LEFT OUTER JOIN account_ledgers ON accounts.id = account_ledgers.account_id
+        INNER JOIN category on category.uuid=account_ledgers.category where
+        accounts.id = """ + str(self.id) + """
+        GROUP BY accounts.id,account_ledgers.category,category.name """)
 
         wallets = query(sql)
         if not wallets:
@@ -104,19 +91,12 @@ class Account(db.Model, BaseMixin, AuditableMixin):
         Get the limits per category..
         this is the summation of all entries under a category
         """
-        sql = (
-            """ accounts.id,account_ledgers.category,category.name,
-		    COALESCE(sum(account_ledgers.amount), 0.0) as balance
-	    FROM accounts 
-		LEFT OUTER JOIN account_ledgers
-		ON accounts.id = account_ledgers.account_id
-		INNER JOIN category on category.uuid=account_ledgers.category
-        where accounts.id = """
-            + str(self.id)
-            + """
-	    GROUP BY accounts.id,account_ledgers.category,category.name
-        """
-        )
+        sql = (""" accounts.id,account_ledgers.category,category.name,
+        COALESCE(sum(account_ledgers.amount), 0.0) as balance FROM accounts
+        LEFT OUTER JOIN account_ledgers ON accounts.id = account_ledgers.account_id
+        INNER JOIN category on category.uuid=account_ledgers.category
+        where accounts.id = """ + str(self.id) + """
+        GROUP BY accounts.id,account_ledgers.category,category.name""")
 
         wallets = query(sql)
         if wallets is None:

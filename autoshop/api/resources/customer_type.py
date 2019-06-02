@@ -37,7 +37,10 @@ class CustomerTypeResource(Resource):
             return errors, 422
         customer_type.modified_by = get_jwt_identity()
         db.session.commit()
-        return {"msg": "customer_type updated", "customer_type": schema.dump(customer_type).data}
+        return {
+            "msg": "customer_type updated",
+            "customer_type": schema.dump(customer_type).data,
+        }
 
     def delete(self, customer_type_id):
         customer_type = CustomerType.query.get_or_404(customer_type_id)
@@ -92,13 +95,21 @@ class CustomerTypeList(Resource):
         try:
             customer_type.created_by = get_jwt_identity()
 
-            if customer_type.get(name=customer_type.name, entity_id=customer_type.entity_id):
+            if customer_type.get(
+                name=customer_type.name, entity_id=customer_type.entity_id
+            ):
                 return {"msg": "The supplied customer_type already exists"}, 409
             else:
                 db.session.add(customer_type)
             db.session.commit()
 
-            return ({"msg": "customer_type created", "customer_type": schema.dump(customer_type).data}, 201)
+            return (
+                {
+                    "msg": "customer_type created",
+                    "customer_type": schema.dump(customer_type).data,
+                },
+                201,
+            )
         except Exception as e:
             db.session.rollback()
             return {"msg": e.args[0]}, 500

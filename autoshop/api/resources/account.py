@@ -101,13 +101,13 @@ class AccountEntriesResource(Resource):
             """ 0 as entry_id,'' as tran_type,'credit' as tran_category,
                 (select date_created from accounts where id="""
             + str(account_id)
-            + """) 
-                as date_created,0 as amount,0 as balance 
+            + """)
+                as date_created,0 as amount,0 as balance
                 union
                 select entry_id,tran_type,tran_category,date_created,amount,
                 (select sum(amount) from account_ledgers b where account_id="""
             + str(account_id)
-            + """ 
+            + """
                 and b.entry_id<=a.entry_id ) as balance from account_ledgers a
                 where account_id="""
             + str(account_id)
@@ -126,9 +126,10 @@ class AccountEntriesList(Resource):
     method_decorators = [jwt_required]
 
     def get(self):
-        sql = """ V.entry_id,account_id,B.uuid,H.name, V.reference, V.tran_type,V.tran_category,V.date_created,
-	    amount, e.name as entity_id FROM account_ledgers AS V 
-		inner join accounts AS B on B.id=V.account_id inner join account_holders H on B.owner_id=H.uuid inner join entity e on e.uuid=V.entity_id """
+        sql = """ V.entry_id,account_id,B.uuid,H.name, V.reference, V.tran_type,V.tran_category,
+        V.date_created,amount, e.name as entity_id FROM account_ledgers AS V
+        inner join accounts AS B on B.id=V.account_id inner join account_holders H on
+        B.owner_id=H.uuid inner join entity e on e.uuid=V.entity_id """
 
         if request.args.get("company") is not None:
             where = " where entity_id='" + request.args.get("company") + "'"

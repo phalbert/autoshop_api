@@ -1,10 +1,10 @@
-from sqlalchemy import CheckConstraint
 
-from autoshop.extensions import db, pwd_context
+from autoshop.extensions import db
 from autoshop.models.account import Account
 from autoshop.models.audit_mixin import AuditableMixin
-from autoshop.models.base_mixin import BaseMixin, PersonMixin
+from autoshop.models.base_mixin import BaseMixin
 from autoshop.models.entity import Entity
+
 
 class Customer(db.Model, BaseMixin, AuditableMixin):
     """Basic Customer model
@@ -15,7 +15,9 @@ class Customer(db.Model, BaseMixin, AuditableMixin):
     email = db.Column(db.String(50))
     address = db.Column(db.String(500))
     entity_id = db.Column(db.String(50), db.ForeignKey("entity.uuid"), nullable=False)
-    type_id = db.Column(db.String(50), db.ForeignKey("customer_type.uuid"), nullable=False)
+    type_id = db.Column(
+        db.String(50), db.ForeignKey("customer_type.uuid"), nullable=False
+    )
     vehicles = db.relationship("Vehicle", lazy="dynamic")
 
     def __init__(self, **kwargs):

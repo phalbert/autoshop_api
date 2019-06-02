@@ -34,7 +34,10 @@ class VehicleTypeResource(Resource):
             return errors, 422
         vehicle_type.modified_by = get_jwt_identity()
         db.session.commit()
-        return {"msg": "vehicle_type updated", "vehicle_type": schema.dump(vehicle_type).data}
+        return {
+            "msg": "vehicle_type updated",
+            "vehicle_type": schema.dump(vehicle_type).data,
+        }
 
     def delete(self, vehicle_type_id):
         vehicle_type = VehicleType.query.get_or_404(vehicle_type_id)
@@ -70,6 +73,9 @@ class VehicleTypeList(Resource):
         db.session.commit()
 
         return (
-            {"msg": "vehicle_type created", "vehicle_type": schema.dump(vehicle_type).data},
+            {
+                "msg": "vehicle_type created",
+                "vehicle_type": schema.dump(vehicle_type).data,
+            },
             201,
         )
