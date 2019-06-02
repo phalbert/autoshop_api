@@ -15,10 +15,13 @@ class UserSchema(ma.ModelSchema):
         model = User
         sqla_session = db.session
 
+        additional = ("creator", "role", "company", "category")
+
 
 class UserResource(Resource):
     """Single object resource
     """
+
     method_decorators = [jwt_required]
 
     def get(self, user_id):
@@ -46,12 +49,21 @@ class UserResource(Resource):
 class UserList(Resource):
     """Creation and get_all
     """
+
     method_decorators = [jwt_required]
 
     def get(self):
         schema = UserSchema(many=True)
-        query = User.query
-        return paginate(query, schema)
+
+        if request.args.get("username") is not None:
+            username = request.args.get("username")
+            query = User.query.filter_by(username=username)
+        elif request.args.get("company") is not None:
+            company = request.args.get("company")
+            query = User.query.filter_by(company_id=company)
+        else:
+            query = User.query
+        return paginate(query.order_by(User.id.desc()), schema)
 
     def post(self):
         schema = UserSchema()

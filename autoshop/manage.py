@@ -1,5 +1,7 @@
 import click
+import os
 from flask.cli import FlaskGroup
+from flask import current_app as app
 
 from autoshop.app import create_app
 
@@ -13,24 +15,136 @@ def cli():
     """Main entry point"""
 
 
+@cli.command("reset")
+def reset():
+    """Drop db and remove migrations
+    """
+    from autoshop.extensions import db
+    from autoshop.commons.dbaccess import execute_sql
+
+    click.echo("remove migrations and drop db")
+    os.system("rm -rf migrations")
+    fileDir = os.path.dirname(os.path.realpath("__file__"))
+    filename = os.path.join(fileDir, "autoshop/sql/drop.sql")
+    file = open(filename)
+    execute_sql(file)
+    db.drop_all()
+
+
+@cli.command("recreate_views")
+def recreate_views():
+    """Drop views and recreate
+    """
+    from autoshop.extensions import db
+    from autoshop.commons.dbaccess import execute_sql
+
+    fileDir = os.path.dirname(os.path.realpath("__file__"))
+    filename = os.path.join(fileDir, "autoshop/sql/views.sql")
+    file = open(filename)
+    execute_sql(file)
+
+
 @cli.command("init")
 def init():
     """Init application, create database tables
     and create a new user named admin with password admin
     """
     from autoshop.extensions import db
-    from autoshop.models import User
+    from autoshop.models import ( 
+        User, Role, PaymentType, TransactionType,
+        VehicleType, CustomerType
+    )
+    from autoshop.commons.dbaccess import execute_sql
+
     click.echo("create database")
     db.create_all()
     click.echo("done")
 
+    click.echo("add account balances view")
+    fileDir = os.path.dirname(os.path.realpath("__file__"))
+    filename = os.path.join(fileDir, "autoshop/sql/accounting.sql")
+    file = open(filename)
+    execute_sql(file)
+    click.echo("add other views")
+    filename2 = os.path.join(fileDir, "autoshop/sql/views.sql")
+    file2 = open(filename2)
+    execute_sql(file2)
+
     click.echo("create user")
-    user = User(
-        username='admin',
-        email='admin@mail.com',
-        password='admin',
-        active=True
+    role = Role(
+        uuid="system_admin",
+        name="System Admin",
+        category="system",
+        active=True,
+        created_by=1,
     )
+    role2 = Role(
+        uuid="system_user",
+        name="System User",
+        category="system",
+        active=True,
+        created_by=1,
+    )
+    role3 = Role(
+        uuid="entity_admin",
+        name="Entity Admin",
+        category="entity",
+        active=True,
+        created_by=1,
+    )
+    role5 = Role(
+        uuid="entity_user",
+        name="Entity User",
+        category="entity",
+        active=True,
+        created_by=1,
+    )
+    role4 = Role(
+        uuid="vendor_user",
+        name="Vendor User",
+        category="vendor",
+        active=True,
+        created_by=1,
+    )
+
+
+    pay_type = PaymentType(uuid="momo", name="Mobile Money", active=True, created_by=1)
+    pay_type2 = PaymentType(uuid="cash", name="Cash", active=True, created_by=1)
+
+    tran_type = TransactionType(uuid="bill", name="Bill", active=True, created_by=1)
+    tran_type2 = TransactionType(
+        uuid="payment", name="Payment", active=True, created_by=1
+    )
+    tran_type3 = TransactionType(
+        uuid="reversal", name="Reversal", active=True, created_by=1
+    )
+    tran_type4 = TransactionType(
+        uuid="adjustment", name="Adjustment", active=True, created_by=1
+    )
+
+    user = User(
+        username=app.config["APP_KEY"],
+        first_name="System",
+        last_name="Administrator",
+        email="admin@mail.com",
+        password=app.config["APP_SECRET"],
+        role_code="system_admin",
+        active=True,
+        company_id="system",
+    )
+
+    pay_type.save()
+    pay_type2.save()
+ 
+
+    db.session.add(tran_type)
+    db.session.add(tran_type2)
+    db.session.add(tran_type3)
+    db.session.add(tran_type4)
+    db.session.add(role)
+    db.session.add(role2)
+    db.session.add(role3)
+    db.session.add(role4)
     db.session.add(user)
     db.session.commit()
     click.echo("created user admin")

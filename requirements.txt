@@ -8,3 +8,4 @@ marshmallow-sqlalchemy
 python-dotenv
 passlib
 tox
+psycopg2
