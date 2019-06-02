@@ -1,18 +1,24 @@
-# This is a simple Dockerfile to use while developing
-# It's not suitable for production
-#
-# It allows you to run both flask and celery if you enabled it
-# for flask: docker run --env-file=.flaskenv image flask run
-# for celery: docker run --env-file=.flaskenv image celery worker -A myapi.celery_app:app
-#
-# note that celery will require a running broker and result backend
-FROM python:3.7
+# base image
+FROM python:3.7.2-alpine
 
-RUN mkdir /code
-WORKDIR /code
+# install dependencies
+RUN apk update && \
+    apk add --no-cache linux-headers g++ && \
+    apk add --virtual build-deps gcc python-dev musl-dev && \
+    apk add postgresql-dev && \
+    apk add netcat-openbsd
 
-COPY . /code/
+# set working directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# add and install requirements
+COPY ./requirements.txt /usr/src/app/requirements.txt
 RUN pip install -r requirements.txt
+
+# add app
+COPY . /usr/src/app
 RUN pip install -e .
 
-EXPOSE 5000
+# run server
+CMD ["gunicorn", "-w", "9", "-b", ":5000", "libraryapi.wsgi:app"]
