@@ -15,5 +15,6 @@ psycopg2
 gunicorn
 environs
 requests
+rfc3339
 
 
