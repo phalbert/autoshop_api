@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, current_app as app
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource
 from marshmallow import validate
@@ -94,6 +94,7 @@ class CustomerList(Resource):
 
             if not customer.created_by:
                 customer.created_by = get_jwt_identity()
+            app.logger.info(customer.entity_id)
 
             if not Entity.get(uuid=customer.entity_id):
                 return {"msg": "The supplied entity id does not exist"}, 422
@@ -104,6 +105,7 @@ class CustomerList(Resource):
             if Customer.get(phone=customer.phone, entity_id=customer.entity_id):
                 return {"msg": "The supplied customer phone already exists"}, 409
             else:
+                
                 customer.log("A")
 
                 account = Account(
