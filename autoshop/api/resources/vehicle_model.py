@@ -66,7 +66,7 @@ class VehicleModelList(Resource):
 
         vehicle_model.created_by = get_jwt_identity()
 
-        if VehicleModel.get(isbn=vehicle_model.isbn, entity_id=vehicle_model.entity_id):
+        if VehicleModel.get(name=vehicle_model.name):
             return {"msg": "The supplied vehicle_model already exists"}, 409
 
         db.session.add(vehicle_model)
