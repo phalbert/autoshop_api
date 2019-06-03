@@ -21,4 +21,4 @@ COPY . /usr/src/app
 RUN pip install -e .
 
 # run server
-CMD ["gunicorn", "-w", "9", "-b", ":5000", "libraryapi.wsgi:app"]
+CMD ["gunicorn", "-w", "9", "-b", ":5000", "autoshop.wsgi:app"]
