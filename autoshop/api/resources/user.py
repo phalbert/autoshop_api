@@ -35,7 +35,6 @@ class UserResource(Resource):
         user, errors = schema.load(request.json, instance=user)
         if errors:
             return errors, 422
-
         return {"msg": "user updated", "user": schema.dump(user).data}
 
     def delete(self, user_id):
@@ -50,7 +49,7 @@ class UserList(Resource):
     """Creation and get_all
     """
 
-    # method_decorators = [jwt_required]
+    method_decorators = [jwt_required]
 
     def get(self):
         schema = UserSchema(many=True)

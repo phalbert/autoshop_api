@@ -15,7 +15,6 @@ def create_app(testing=False, cli=False):
 
     configure_extensions(app, cli)
     register_blueprints(app)
-    register_requestloggers(app)
     return app
 
 
@@ -35,12 +34,11 @@ def register_blueprints(app):
     app.register_blueprint(auth.views.blueprint)
     app.register_blueprint(api.views.blueprint)
 
+
 def register_requestloggers(app):
     """Register custom request loggers."""
     import datetime
     import time
-
-    import colors
     from flask import g, request
     from rfc3339 import rfc3339
 
