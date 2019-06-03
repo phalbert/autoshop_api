@@ -18,7 +18,7 @@ class Customer(db.Model, BaseMixin, AuditableMixin):
     type_id = db.Column(
         db.String(50), db.ForeignKey("customer_type.uuid"), nullable=False
     )
-    vehicles = db.relationship("Vehicle", lazy="dynamic")
+    vehicles = db.relationship("Vehicle", back_populates="customer")
 
     def __init__(self, **kwargs):
         super(Customer, self).__init__(**kwargs)

@@ -38,9 +38,8 @@ class Vehicle(db.Model, BaseMixin, AuditableMixin):
     model_no = db.Column(db.String(50))
     engine_no = db.Column(db.String(50))
     vehicle_type = db.Column(db.String(50))
-    customer_id = db.Column(
-        db.String(50), db.ForeignKey("customer.uuid"), nullable=False
-    )
+    customer_id = db.Column(db.String(50), db.ForeignKey("customer.uuid"))
+    customer = db.relationship("Customer", back_populates="vehicles")
 
     def __init__(self, **kwargs):
         super(Vehicle, self).__init__(**kwargs)
@@ -48,3 +47,4 @@ class Vehicle(db.Model, BaseMixin, AuditableMixin):
 
     def __repr__(self):
         return "<Vehicle %s>" % self.uuid
+

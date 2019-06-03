@@ -12,7 +12,8 @@ from autoshop.models import Account, Customer, Entity, CustomerType
 class CustomerSchema(ma.ModelSchema):
 
     account = ma.Nested(AccountSchema)
-
+    
+    type_id = ma.String(required=True)
     entity_id = ma.String(required=True)
     name = ma.String(required=True)
     email = ma.Email()

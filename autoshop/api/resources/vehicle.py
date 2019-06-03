@@ -5,9 +5,12 @@ from flask_restful import Resource
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
 from autoshop.models import Vehicle
+from autoshop.api.resources.customer import CustomerSchema
 
 
 class VehicleSchema(ma.ModelSchema):
+    customer = ma.Schema(CustomerSchema)
+    
     registration_no = ma.String(required=True)
     chassis_no = ma.String(required=True)
     model = ma.String(required=True)
