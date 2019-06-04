@@ -19,15 +19,19 @@ straightforward as possible.
  
 ### Fixed
 
-## [0.0.1] - 2019-06-01
+## [0.0.1] - 2019-06-04
  
 ### Added
+
+- Customer creation and update
+- Vehicle creation and update
+- Vehicle model and types module
+- Users and roles module
+- Access Logs report
+- Reset and change password functionalities
+- Entity & vendor modules
+- Accounting module
    
 ### Changed
  
 ### Fixed
- 
-- [PROJECTNAME-UUUU](http://tickets.projectname.com/browse/PROJECTNAME-UUUU)
-  MINOR Fix module foo tests
-- [PROJECTNAME-RRRR](http://tickets.projectname.com/browse/PROJECTNAME-RRRR)
-  MAJOR Module foo's timeline uses the browser timezone for date resolution 
