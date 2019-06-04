@@ -42,6 +42,17 @@ def recreate_views():
     file = open(filename)
     execute_sql(file)
 
+@cli.command("truncate")
+def truncate():
+    """truncate
+    """
+    click.echo("remove migrations and truncate")
+    os.system("rm -rf migrations")
+    fileDir = os.path.dirname(os.path.realpath("__file__"))
+    filename = os.path.join(fileDir, "autoshop/sql/truncate.sql")
+    file = open(filename)
+    execute_sql(file)
+
 
 @cli.command("strip")
 def strip():
