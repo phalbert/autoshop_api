@@ -7,6 +7,8 @@ from autoshop.models.base_mixin import BaseMixin
 class VehicleModel(db.Model, BaseMixin, AuditableMixin):
 
     name = db.Column(db.String(50), unique=True, nullable=False)
+    fuel_type = db.Column(db.String(50))
+    transmission = db.Column(db.String(50))
     description = db.Column(db.String(2000))
 
     def __init__(self, **kwargs):

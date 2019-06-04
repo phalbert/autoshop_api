@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from autoshop.models import User
 from autoshop.extensions import ma, db
@@ -35,6 +35,8 @@ class UserResource(Resource):
         user, errors = schema.load(request.json, instance=user)
         if errors:
             return errors, 422
+        user.modified_by = get_jwt_identity()
+        db.session.commit()
         return {"msg": "user updated", "user": schema.dump(user).data}
 
     def delete(self, user_id):
@@ -69,6 +71,8 @@ class UserList(Resource):
         user, errors = schema.load(request.json)
         if errors:
             return errors, 422
+        
+        user.created_by = get_jwt_identity()
 
         db.session.add(user)
         db.session.commit()
