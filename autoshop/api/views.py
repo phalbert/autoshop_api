@@ -39,7 +39,8 @@ from autoshop.api.resources import (
     VendorList,
     VendorResource,
     VehicleTypeResource,
-    VehicleTypeList
+    VehicleTypeList,
+    AccessLogResource, AccessLogList
 )
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
@@ -93,3 +94,6 @@ api.add_resource(SettingList, "/settings")
 
 api.add_resource(SearchList, "/search")
 api.add_resource(QueryList, "/query")
+
+api.add_resource(AccessLogResource, '/access_logs/<int:access_log_id>')
+api.add_resource(AccessLogList, '/access_logs')

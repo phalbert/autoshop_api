@@ -7,10 +7,12 @@ from .entry import Entry, Transaction
 from .setting import PaymentType, Setting, TransactionType, CustomerType
 from .user import Role, User
 from .vehicle import Vehicle, VehicleModel, VehicleType
+from .access_log import AccessLog
 
 __all__ = [
     "User",
     "Role",
+    "AccessLog",
     "TokenBlacklist",
     "Account",
     "AccountType",

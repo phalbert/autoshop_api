@@ -20,8 +20,11 @@ from .transaction_type import TransactionTypeList, TransactionTypeResource
 from .user import UserList, UserResource
 from .vendor import VendorList, VendorResource
 from .vehicle_model import VehicleModelResource, VehicleModelList
+from .access_log import AccessLogResource, AccessLogList
 
 __all__ = [
+    "AccessLogResource",
+    "AccessLogList",
     "UserResource",
     "UserList",
     "EntityResource",
