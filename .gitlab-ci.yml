@@ -1,6 +1,7 @@
 stages:
   - test
   - build
+  - push
   
 test:
   image: python:latest
@@ -20,7 +21,7 @@ test:
   - source venv/bin/activate
   script:
   - pip install tox
-  # - tox
+  #- tox
 
 build:
   image: docker:stable
@@ -50,5 +51,43 @@ build:
   script:
     - docker pull $CI_REGISTRY_IMAGE:master || true
     - docker build --cache-from $CI_REGISTRY_IMAGE:master --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE:master .
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
     - docker push $CI_REGISTRY_IMAGE:master
+
+
+# Finally, the goal here is to Docker tag any Git tag
+# GitLab will start a new pipeline everytime a Git tag is created, which is pretty awesome
+release:
+  image: docker:stable
+  variables:
+    # When using dind service we need to instruct docker, to talk with the
+    # daemon started inside of the service. The daemon is available with
+    # a network connection instead of the default /var/run/docker.sock socket.
+    #
+    # The 'docker' hostname is the alias of the service container as described at
+    # https://docs.gitlab.com/ee/ci/docker/using_docker_images.html#accessing-the-services
+    #
+    # Note that if you're using Kubernetes executor, the variable should be set to
+    # tcp://localhost:2375 because of how Kubernetes executor connects services
+    # to the job container
+    DOCKER_HOST: tcp://docker:2375/
+    # When using dind, it's wise to use the overlayfs driver for
+    # improved performance.
+    DOCKER_DRIVER: overlay2
+    # Again, we do not need the source code here. Just playing with Docker.
+    GIT_STRATEGY: none
+
+  services:
+    - docker:dind
+
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
+
+  stage: push
+  only:
+    # We want this job to be run on tags only.
+    - tags
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:master
+    - docker tag $CI_REGISTRY_IMAGE:master $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+
