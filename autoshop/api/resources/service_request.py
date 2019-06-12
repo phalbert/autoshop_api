@@ -5,10 +5,20 @@ from marshmallow import validate
 
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
-from autoshop.models import Entity, ServiceRequest, TransactionType
+from autoshop.models import (
+    Entity, ServiceRequest, TransactionType
+)
+from autoshop.api.resources.vehicle import VehicleSchema
+from autoshop.api.resources.service import ServiceSchema
+from autoshop.api.resources.customer import CustomerSchema
+
 
 
 class ServiceRequestSchema(ma.ModelSchema):
+    vehicle = ma.Nested(VehicleSchema)
+    service = ma.Nested(ServiceSchema)
+    customer = ma.Nested(CustomerSchema)
+
     not_empty = validate.Length(min=1, max=50, error="Field cant be empty.")
     pay_types = validate.OneOf(["cash", "momo"])
 
@@ -85,17 +95,13 @@ class ServiceRequestList(Resource):
         service_request.created_by = identity
 
         try:
-            if ServiceRequest.get(customer_id=service_request.customer_id):
-                return {"msg": "The supplied customer id already exists"}, 409
-            if ServiceRequest.get(service_id=service_request.service_id):
-                return {"msg": "The supplied service id already exists"}, 409
-            else:
-                db.session.add(service_request)
-                db.session.commit()
-                return (
-                    {"msg": "service_request created", "service_request": schema.dump(service_request).data},
-                    201,
-                )
+            db.session.add(service_request)
+            db.session.commit()
+            return (
+                {"msg": "service_request created", "service_request": schema.dump(service_request).data},
+                201,
+            )
+                
         except Exception as e:
             db.session.rollback()
             return {"msg": e.args[0], "exception": e.args}, 500
