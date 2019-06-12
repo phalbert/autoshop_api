@@ -40,12 +40,21 @@ from autoshop.api.resources import (
     VendorResource,
     VehicleTypeResource,
     VehicleTypeList,
-    AccessLogResource, AccessLogList
+    AccessLogResource, AccessLogList,
+    ServiceResource, ServiceList,
+    ServiceRequestResource, ServiceRequestList,
+    WorkItemResource, WorkItemList
 )
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
 api = Api(blueprint)
 
+api.add_resource(ServiceResource, "/services/<int:service_id>")
+api.add_resource(ServiceList, "/services")
+api.add_resource(ServiceRequestResource, "/service_requests/<int:service_request_id>")
+api.add_resource(ServiceRequestList, "/service_requests")
+api.add_resource(WorkItemResource, "/work_items/<int:work_item_id>")
+api.add_resource(WorkItemList, "/work_items")
 
 api.add_resource(UserResource, "/users/<int:user_id>")
 api.add_resource(UserList, "/users")

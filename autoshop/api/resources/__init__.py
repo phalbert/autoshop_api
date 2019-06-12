@@ -21,8 +21,18 @@ from .user import UserList, UserResource
 from .vendor import VendorList, VendorResource
 from .vehicle_model import VehicleModelResource, VehicleModelList
 from .access_log import AccessLogResource, AccessLogList
+from .service import ServiceResource, ServiceList
+from .service_request import ServiceRequestResource, ServiceRequestList
+from .work_item import WorkItemResource, WorkItemList
+
 
 __all__ = [
+    "ServiceResource",
+    "ServiceList",
+    "ServiceRequestResource",
+    "ServiceRequestList",
+    "WorkItemResource", 
+    "WorkItemList",
     "AccessLogResource",
     "AccessLogList",
     "UserResource",
