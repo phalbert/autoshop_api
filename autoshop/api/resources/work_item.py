@@ -8,9 +8,10 @@ from sqlalchemy import and_
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
 from autoshop.models import WorkItem, ServiceRequest
-
+from autoshop.api.resources.service_request import ServiceRequestSchema
 
 class WorkItemSchema(ma.ModelSchema):
+    request = ma.Nested(ServiceRequestSchema)
     not_empty = validate.Length(min=1, max=50, error="Field cant be empty.")
     
     request_id = ma.String(required=True)

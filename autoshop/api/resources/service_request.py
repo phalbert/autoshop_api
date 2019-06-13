@@ -11,13 +11,13 @@ from autoshop.models import (
 from autoshop.api.resources.vehicle import VehicleSchema
 from autoshop.api.resources.service import ServiceSchema
 from autoshop.api.resources.customer import CustomerSchema
-
-
+from autoshop.api.resources.entity import EntitySchema
 
 class ServiceRequestSchema(ma.ModelSchema):
     vehicle = ma.Nested(VehicleSchema)
     service = ma.Nested(ServiceSchema)
-    customer = ma.Nested(CustomerSchema)
+    customer = ma.Nested(CustomerSchema, only=('name','address','email', 'phone'))
+    entity = ma.Nested(EntitySchema, only=('name','address','email', 'phone'))
 
     not_empty = validate.Length(min=1, max=50, error="Field cant be empty.")
     pay_types = validate.OneOf(["cash", "momo"])
@@ -93,6 +93,7 @@ class ServiceRequestList(Resource):
             return errors, 422
 
         service_request.created_by = identity
+
 
         try:
             db.session.add(service_request)
