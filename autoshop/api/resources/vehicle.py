@@ -4,19 +4,17 @@ from flask_restful import Resource
 
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
-from autoshop.models import Vehicle
-from autoshop.api.resources.customer import CustomerSchema
-
+from autoshop.models import Vehicle, VehicleModel, Customer
+from autoshop.api.resources.vehicle_model import VehicleModelSchema
 
 class VehicleSchema(ma.ModelSchema):
-    customer = ma.Schema(CustomerSchema)
-    
+    vehicle_model = ma.Nested(VehicleModelSchema)
+
     registration_no = ma.String(required=True)
     chassis_no = ma.String(required=True)
-    model = ma.String(required=True)
+    model_id = ma.String(required=True)
     model_no = ma.String(required=True)
     engine_no = ma.String(required=True)
-    vehicle_type = ma.String(required=True)
     customer_id = ma.String(required=True)
 
     class Meta:
@@ -63,7 +61,10 @@ class VehicleList(Resource):
 
     def get(self):
         schema = VehicleSchema(many=True)
-        query = Vehicle.query
+        if request.args.get("customer") is not None:
+            query = Vehicle.query.filter_by(customer_id=request.args.get("customer"))
+        else:
+            query = Vehicle.query
         return paginate(query, schema)
 
     def post(self):
@@ -74,9 +75,11 @@ class VehicleList(Resource):
 
         vehicle.created_by = get_jwt_identity()
 
-        if Vehicle.get(
-            registration_no=vehicle.registration_no, customer_id=vehicle.customer_id
-        ):
+        if not Customer.get(uuid=vehicle.customer_id):
+            return {"msg": "The supplied customer doesnt exist"}, 409
+        if not VehicleModel.get(uuid=vehicle.model_id):
+            return {"msg": "The supplied vehicle model doesnt exist"}, 409
+        if Vehicle.get(registration_no=vehicle.registration_no, customer_id=vehicle.customer_id):
             return {"msg": "The supplied vehicle already exists"}, 409
 
         db.session.add(vehicle)

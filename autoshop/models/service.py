@@ -48,8 +48,9 @@ class ServiceRequest(db.Model, BaseMixin, AuditableMixin):
 class WorkItem(db.Model, BaseMixin, AuditableMixin):
     request_id = db.Column(db.String(50), db.ForeignKey('service_request.uuid'))
     item = db.Column(db.String(50))
-    quantity_id = db.Column(db.String(50))
+    quantity = db.Column(db.String(50))
     unit_cost = db.Column(db.String(50))
+    units = db.Column(db.String(50))
     entity_id = db.Column(db.String(50), db.ForeignKey('entity.uuid'))
 
     request = db.relationship('ServiceRequest')
