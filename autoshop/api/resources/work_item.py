@@ -13,7 +13,7 @@ from autoshop.models import WorkItem, ServiceRequest
 class WorkItemSchema(ma.ModelSchema):
     not_empty = validate.Length(min=1, max=50, error="Field cant be empty.")
     
-    request_id = ma.Integer(required=True)
+    request_id = ma.String(required=True)
     item = ma.String(required=True, validate=[not_empty])
     quantity_id = ma.Integer(required=True)
     unit_cost = ma.Integer(required=True)
@@ -23,7 +23,7 @@ class WorkItemSchema(ma.ModelSchema):
         model = WorkItem
         sqla_session = db.session
 
-        additional = ("tarriff",)
+        additional = ("creator", "cost")
 
 
 class WorkItemResource(Resource):
@@ -94,7 +94,7 @@ class WorkItemList(Resource):
             if not ServiceRequest.get(uuid=work_item.request_id):
                 return {"msg": "The supplied service request code doesnt exist"}, 422
             if WorkItem.get(request_id=work_item.request_id, item=work_item.item):
-                return {"msg": "The supplied work_item range already exists"}, 409
+                return {"msg": "The supplied work_item already exists"}, 409
             else:
                 db.session.add(work_item)
                 db.session.commit()
