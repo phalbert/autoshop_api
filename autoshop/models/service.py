@@ -65,4 +65,7 @@ class WorkItem(db.Model, BaseMixin, AuditableMixin):
 
     @property
     def cost(self):
-        return int(self.quantity_id) * int(self.unit_cost)
+        try:
+            return int(self.quantity) * int(self.unit_cost)
+        except Exception as e:
+            return None

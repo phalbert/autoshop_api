@@ -16,7 +16,7 @@ class WorkItemSchema(ma.ModelSchema):
     
     request_id = ma.String(required=True)
     item = ma.String(required=True, validate=[not_empty])
-    quantity_id = ma.Integer(required=True)
+    quantity = ma.Integer(required=True)
     unit_cost = ma.Integer(required=True)
     entity_id = ma.String(required=True)
 
