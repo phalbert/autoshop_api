@@ -26,12 +26,15 @@ from autoshop.api.resources import (
     WorkItemResource, WorkItemList,
     PartResource,PartList,
     PartCategoryResource,PartCategoryList,
-    EmployeeTypeResource, EmployeeTypeList
+    EmployeeTypeResource, EmployeeTypeList,
+    EmployeeResource, EmployeeList
 )
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
 api = Api(blueprint)
 
+api.add_resource(EmployeeResource, "/employees/<int:employee_id>")
+api.add_resource(EmployeeList, "/employees")
 api.add_resource(EmployeeTypeResource, "/employee_types/<int:employee_type_id>")
 api.add_resource(EmployeeTypeList, "/employee_types")
 api.add_resource(PartCategoryResource, "/part_categories/<int:part_category_id>")

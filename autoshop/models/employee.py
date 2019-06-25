@@ -33,6 +33,9 @@ class Employee(db.Model, BaseMixin, AuditableMixin):
     type_id = db.Column(
         db.String(50), db.ForeignKey("employee_type.uuid"), nullable=False
     )
+
+    entity = db.relationship('Entity')
+    type = db.relationship('EmployeeType')
     jobs = db.relationship("Job", back_populates="employee")
 
     def __init__(self, **kwargs):
