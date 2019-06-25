@@ -28,8 +28,11 @@ from .part import PartResource, PartList
 from .part_category import PartCategoryResource, PartCategoryList
 from .employee_type import EmployeeTypeResource, EmployeeTypeList
 from .employee import EmployeeResource, EmployeeList
+from .job import JobResource, JobList
 
 __all__ = [
+    "JobResource", 
+    "JobList",
     "EmployeeResource", 
     "EmployeeList",
     "EmployeeTypeResource",
