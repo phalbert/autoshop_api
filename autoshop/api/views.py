@@ -2,53 +2,39 @@ from flask import Blueprint
 from flask_restful import Api
 
 from autoshop.api.resources import (
-    AccountEntriesList,
-    AccountEntriesResource,
-    AccountList,
-    AccountResource,
-    AccountTypeList,
-    AccountTypeResource,
-    VehicleList,
-    VehicleResource,
-    CustomerList,
-    CustomerResource,
-    EntityList,
-    EntityResource,
-    EntityVendorList,
-    EntityVendorResource,
-    EntryList,
-    EntryResource,
-    PaymentTypeList,
-    PaymentTypeResource,
-    CustomerTypeList,
-    CustomerTypeResource,
-    QueryList,
-    RoleList,
-    RoleResource,
-    SearchList,
-    SettingList,
-    SettingResource,
-    VehicleModelList,
-    VehicleModelResource,
-    TransactionList,
-    TransactionResource,
-    TransactionTypeList,
-    TransactionTypeResource,
-    UserList,
-    UserResource,
-    VendorList,
-    VendorResource,
-    VehicleTypeResource,
-    VehicleTypeList,
+    AccountEntriesList,AccountEntriesResource,
+    AccountList,AccountResource,
+    AccountTypeList,AccountTypeResource,
+    VehicleList,VehicleResource,
+    CustomerList,CustomerResource,
+    EntityList,EntityResource,
+    EntityVendorList,EntityVendorResource,
+    EntryList,EntryResource,
+    PaymentTypeList,PaymentTypeResource,
+    CustomerTypeList,CustomerTypeResource,
+    QueryList,RoleList,RoleResource,
+    SearchList,SettingList,SettingResource,
+    VehicleModelList,VehicleModelResource,
+    TransactionList,TransactionResource,
+    TransactionTypeList,TransactionTypeResource,
+    UserList,UserResource,
+    VendorList,VendorResource,
+    VehicleTypeResource,VehicleTypeList,
     AccessLogResource, AccessLogList,
     ServiceResource, ServiceList,
     ServiceRequestResource, ServiceRequestList,
-    WorkItemResource, WorkItemList
+    WorkItemResource, WorkItemList,
+    PartResource,PartList,
+    PartCategoryResource,PartCategoryList
 )
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
 api = Api(blueprint)
 
+api.add_resource(PartCategoryResource, "/part_categories/<int:part_category_id>")
+api.add_resource(PartCategoryList, "/part_categories")
+api.add_resource(PartResource, "/parts/<int:part_id>")
+api.add_resource(PartList, "/parts")
 api.add_resource(ServiceResource, "/services/<int:service_id>")
 api.add_resource(ServiceList, "/services")
 api.add_resource(ServiceRequestResource, "/service_requests/<int:service_request_id>")

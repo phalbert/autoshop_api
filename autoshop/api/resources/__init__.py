@@ -24,9 +24,14 @@ from .access_log import AccessLogResource, AccessLogList
 from .service import ServiceResource, ServiceList
 from .service_request import ServiceRequestResource, ServiceRequestList
 from .work_item import WorkItemResource, WorkItemList
-
+from .part import PartResource, PartList
+from .part_category import PartCategoryResource, PartCategoryList
 
 __all__ = [
+    "PartCategoryResource", 
+    "PartCategoryList",
+    "PartResource", 
+    "PartList",
     "ServiceResource",
     "ServiceList",
     "ServiceRequestResource",
