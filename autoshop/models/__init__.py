@@ -10,8 +10,12 @@ from .vehicle import Vehicle, VehicleModel, VehicleType
 from .access_log import AccessLog
 from .service import Service, ServiceRequest, WorkItem
 from .part import Part, PartLog, PartCategory
+from .employee import Employee, EmployeeType, Job
 
 __all__ = [
+    "Employee",
+    "EmployeeType",
+    "Job",
     "Part", 
     "PartLog", 
     "PartCategory",
