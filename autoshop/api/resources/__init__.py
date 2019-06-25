@@ -26,8 +26,11 @@ from .service_request import ServiceRequestResource, ServiceRequestList
 from .work_item import WorkItemResource, WorkItemList
 from .part import PartResource, PartList
 from .part_category import PartCategoryResource, PartCategoryList
+from .employee_type import EmployeeTypeResource, EmployeeTypeList
 
 __all__ = [
+    "EmployeeTypeResource",
+    "EmployeeTypeList",
     "PartCategoryResource", 
     "PartCategoryList",
     "PartResource", 
