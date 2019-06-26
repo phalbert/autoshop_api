@@ -4,7 +4,7 @@ from flask_restful import Resource
 
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
-from autoshop.models import VehicleModel
+from autoshop.models import VehicleModel, VehicleType
 from autoshop.api.resources.vehicle_type import VehicleTypeSchema
 
 class VehicleModelSchema(ma.ModelSchema):
@@ -72,7 +72,7 @@ class VehicleModelList(Resource):
 
         vehicle_model.created_by = get_jwt_identity()
         
-        if VehicleModel.get(type_id=vehicle_model.type_id):
+        if not VehicleType.get(uuid=vehicle_model.type_id):
             return {"msg": "The supplied vehicle type doesnt exist"}, 409
         if VehicleModel.get(name=vehicle_model.name):
             return {"msg": "The supplied vehicle_model already exists"}, 409
