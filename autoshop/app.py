@@ -15,6 +15,7 @@ def create_app(testing=False, cli=False):
 
     configure_extensions(app, cli)
     register_blueprints(app)
+    # register_requestloggers(app)
     return app
 
 
@@ -83,7 +84,9 @@ def register_requestloggers(app):
             parts.append(part)
         line = " ".join(parts)
 
-        app.logger.info(line)
-        app.logger.info(request.get_data())
-        app.logger.info(response.data)
+        from loguru import logger
+
+        logger.info(line)
+        logger.info(request.get_data())
+        logger.info(response.data)
         return response

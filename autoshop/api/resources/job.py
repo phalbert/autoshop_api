@@ -2,6 +2,7 @@ from flask import request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource
 from marshmallow import validate
+from loguru import logger
 
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
@@ -21,7 +22,6 @@ class JobSchema(ma.ModelSchema):
     employee_id = ma.String(required=True)
     request_id = ma.String(required=True)
     is_complete = ma.Boolean()
-    entity_id = ma.String(required=True)
 
     class Meta:
         model = Job
@@ -86,6 +86,7 @@ class JobList(Resource):
             query = Job.query
         return paginate(query, schema)
 
+    @logger.catch
     def post(self):
         identity = get_jwt_identity()
 
@@ -96,15 +97,17 @@ class JobList(Resource):
 
         job.created_by = identity
 
-
+        
         try:
             employee = Employee.get(uuid=job.employee_id)
             if not employee:
                 return {"msg": "Employee id supplied not found"}, 422
             if not ServiceRequest.get(uuid=job.request_id):
                 return {"msg": "The service request id supplied not found"}, 422
+            if Job.get(request_id=job.request_id):
+                return {"msg": "A job already exists for this service request"}, 409
             
-            job.employee = employee.entity_id
+            job.entity_id = employee.entity_id
             
             db.session.add(job)
             db.session.commit()
@@ -115,4 +118,6 @@ class JobList(Resource):
                 
         except Exception as e:
             db.session.rollback()
+            logger.debug(e.args[0])
+
             return {"msg": e.args[0], "exception": e.args}, 500
