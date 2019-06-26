@@ -75,3 +75,28 @@ class Job(db.Model, BaseMixin, AuditableMixin):
 
     def __repr__(self):
         return "<Job %s>" % self.employee_id
+
+class JobItem(db.Model, BaseMixin, AuditableMixin):
+    job_id = db.Column(db.String(50), db.ForeignKey('job.uuid'))
+    item = db.Column(db.String(50))
+    quantity = db.Column(db.String(50))
+    unit_cost = db.Column(db.String(50))
+    units = db.Column(db.String(50))
+    entity_id = db.Column(db.String(50), db.ForeignKey('entity.uuid'))
+
+    job = db.relationship('Job')
+    entity = db.relationship('Entity')
+
+    def __init__(self, **kwargs):
+        super(JobItem, self).__init__(**kwargs)
+        self.get_uuid()
+
+    def __repr__(self):
+        return "<JobItem %s>" % self.uuid
+
+    @property
+    def cost(self):
+        try:
+            return int(self.quantity) * int(self.unit_cost)
+        except Exception as e:
+            return None

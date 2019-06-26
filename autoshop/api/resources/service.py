@@ -19,6 +19,8 @@ class ServiceSchema(ma.ModelSchema):
         model = Service
         sqla_session = db.session
 
+        additional = ('creator', )
+
 class ServiceResource(Resource):
     """Single object resource
     """
