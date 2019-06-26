@@ -98,13 +98,14 @@ class JobList(Resource):
 
 
         try:
-            if not Employee.get(uuid=job.employee_id):
+            employee = Employee.get(uuid=job.employee_id)
+            if not employee:
                 return {"msg": "Employee id supplied not found"}, 422
             if not ServiceRequest.get(uuid=job.request_id):
                 return {"msg": "The service request id supplied not found"}, 422
-            if not Entity.get(uuid=job.entity_id):
-                return {"msg": "entity id supplied not found"}, 422
-
+            
+            job.employee = employee.entity_id
+            
             db.session.add(job)
             db.session.commit()
             return (
