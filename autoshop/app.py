@@ -15,7 +15,7 @@ def create_app(testing=False, cli=False):
 
     configure_extensions(app, cli)
     register_blueprints(app)
-    # register_requestloggers(app)
+    register_requestloggers(app)
     return app
 
 

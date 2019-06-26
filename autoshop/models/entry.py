@@ -166,7 +166,7 @@ class Entry(db.Model):
 
 class Transaction(db.Model, BaseMixin, AuditableMixin):
     tranid = db.Column(db.String(50))
-    reference = db.Column(db.String(50))
+    reference = db.Column(db.String(50)) # customer/vendor id
     vendor_id = db.Column(db.String(50))
     phone = db.Column(db.String(50))
     category = db.Column(db.String(50))

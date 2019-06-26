@@ -11,7 +11,7 @@ from autoshop.models import JobItem, Job
 from autoshop.api.resources.job import JobSchema
 
 class JobItemSchema(ma.ModelSchema):
-    job = ma.Nested(JobSchema)
+    job = ma.Nested(JobSchema, only=('id','employee_id', 'request_id', 'is_complete'))
     not_empty = validate.Length(min=1, max=50, error="Field cant be empty.")
     
     job_id = ma.String(required=True)
@@ -93,7 +93,7 @@ class JobItemList(Resource):
 
         try:
             if not Job.get(uuid=job_item.job_id):
-                return {"msg": "The supplied service request code doesnt exist"}, 422
+                return {"msg": "The supplied job code doesnt exist"}, 422
             if JobItem.get(job_id=job_item.job_id, item=job_item.item):
                 return {"msg": "The supplied job_item already exists"}, 409
             else:

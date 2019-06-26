@@ -4,7 +4,11 @@ from flask_restful import Resource
 
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
-from autoshop.models import Account, Customer, Entry, PaymentType, Transaction, User
+from autoshop.models import (
+    Account, Customer, Entry, 
+    PaymentType, Transaction, User,
+    TransactionType
+)
 
 
 class TransactionSchema(ma.ModelSchema):
@@ -105,7 +109,7 @@ class TransactionList(Resource):
             return {"msg": "This reference does not exist in our customer list"}, 422
         if Transaction.get(tranid=transaction.tranid, vendor_id=transaction.vendor_id):
             return {"msg": "The supplied transaction already exists"}, 409
-        if transaction.tran_type != "payment":
+        if not TransactionType.get(uuid=transaction.tran_type):
             return {"msg": "Unknown transaction type supplied"}, 422
         if not PaymentType.get(uuid=transaction.pay_type):
             return {"msg": "Unknown payment type supplied"}, 422
@@ -127,7 +131,6 @@ class TransactionList(Resource):
                 description=transaction.narration,
                 tran_type=transaction.tran_type,
                 pay_type=transaction.pay_type,
-                category=transaction.category,
             )
             entry.transact()
         else:

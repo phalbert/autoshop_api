@@ -21,6 +21,7 @@ class JobSchema(ma.ModelSchema):
 
     employee_id = ma.String(required=True)
     request_id = ma.String(required=True)
+    entity_id = ma.String()
     is_complete = ma.Boolean()
 
     class Meta:
