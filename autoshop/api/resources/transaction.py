@@ -123,8 +123,6 @@ class TransactionList(Resource):
 
             entry = Entry(
                 reference=transaction.uuid,
-                debit=Account.get(owner_id=transaction.pay_type).id,
-                credit=cust_acct.id,
                 amount=transaction.amount,
                 phone=transaction.phone,
                 entity_id=transaction.entity_id,
@@ -132,6 +130,16 @@ class TransactionList(Resource):
                 tran_type=transaction.tran_type,
                 pay_type=transaction.pay_type,
             )
+
+            if transaction.tran_type == 'payment':
+                entry.debit = Account.get(owner_id=transaction.pay_type).id
+                entry.credit = cust_acct.id
+            elif transaction.tran_type == 'bill':
+                entry.debit = cust_acct.id
+                entry.credit = Account.get(owner_id=transaction.entity_id).id
+            else:
+                raise "Failed to determine transaction accounts"
+
             entry.transact()
         else:
             # just save transaction, and update later in background service
