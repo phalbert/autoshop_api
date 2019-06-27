@@ -12,7 +12,7 @@ class PartCategorySchema(ma.ModelSchema):
         model = PartCategory
         sqla_session = db.session
 
-        additional = ("creator",)
+        additional = ("creator", "parent")
 
 
 class PartCategoryResource(Resource):
