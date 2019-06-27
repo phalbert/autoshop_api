@@ -84,9 +84,9 @@ def register_requestloggers(app):
             parts.append(part)
         line = " ".join(parts)
 
-        from loguru import logger
+        # from loguru import logger
 
-        logger.info(line)
-        logger.info(request.get_data())
-        logger.info(response.data)
+        app.logger.info(line)
+        app.logger.info(request.get_data())
+        app.logger.info(response.data)
         return response

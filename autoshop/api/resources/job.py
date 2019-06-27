@@ -2,7 +2,6 @@ from flask import request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource
 from marshmallow import validate
-from loguru import logger
 
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
@@ -119,6 +118,5 @@ class JobList(Resource):
                 
         except Exception as e:
             db.session.rollback()
-            logger.debug(e.args[0])
 
             return {"msg": e.args[0], "exception": e.args}, 500
