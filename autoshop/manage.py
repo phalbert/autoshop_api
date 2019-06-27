@@ -32,6 +32,14 @@ def reset():
     db.drop_all()
 
 
+@cli.command("seed")
+def seed():
+
+    fileDir = os.path.dirname(os.path.realpath("__file__"))
+    filename = os.path.join(fileDir, "autoshop/sql/makes.sql")
+    file = open(filename)
+    execute_sql(file)
+
 @cli.command("recreate_views")
 def recreate_views():
     """Drop views and recreate

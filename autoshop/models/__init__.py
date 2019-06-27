@@ -6,7 +6,7 @@ from .entity import Entity, Vendor
 from .entry import Entry, Transaction
 from .setting import PaymentType, Setting, TransactionType, CustomerType
 from .user import Role, User
-from .vehicle import Vehicle, VehicleModel, VehicleType
+from .vehicle import Vehicle, VehicleModel, VehicleType, Make
 from .access_log import AccessLog
 from .service import Service, ServiceRequest, WorkItem
 from .part import Part, PartLog, PartCategory

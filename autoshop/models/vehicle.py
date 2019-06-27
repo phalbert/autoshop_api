@@ -3,6 +3,30 @@ from autoshop.extensions import db
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
 
+class Make(db.Model, BaseMixin, AuditableMixin):
+    name = db.Column(db.String(50), unique=True, nullable=False)
+    country = db.Column(db.String(50))
+
+    def __init__(self, **kwargs):
+        super(Make, self).__init__(**kwargs)
+        self.get_uuid()
+
+    def __repr__(self):
+        return "<Make %s>" % self.uuid
+
+class Model(db.Model, BaseMixin, AuditableMixin):
+    name = db.Column(db.String(50), unique=True, nullable=False)
+    year = db.Column(db.Integer)
+    make_id = db.Column(db.Integer, db.ForeignKey('make.id'))
+
+    make = db.relationship('Make')
+    
+    def __init__(self, **kwargs):
+        super(Make, self).__init__(**kwargs)
+        self.get_uuid()
+
+    def __repr__(self):
+        return "<Model %s>" % self.uuid
 
 class VehicleModel(db.Model, BaseMixin, AuditableMixin):
 
@@ -10,7 +34,10 @@ class VehicleModel(db.Model, BaseMixin, AuditableMixin):
     fuel_type = db.Column(db.String(50))
     type_id = db.Column(db.String(50), db.ForeignKey('vehicle_type.uuid'))
     transmission = db.Column(db.String(50))
-    description = db.Column(db.String(2000))
+    year = db.Column(db.Integer)
+    make_id = db.Column(db.Integer, db.ForeignKey('make.id'))
+
+    make = db.relationship('Make')
     type = db.relationship('VehicleType')
 
     def __init__(self, **kwargs):

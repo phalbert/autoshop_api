@@ -30,8 +30,11 @@ from .employee_type import EmployeeTypeResource, EmployeeTypeList
 from .employee import EmployeeResource, EmployeeList
 from .job import JobResource, JobList
 from .job_item import JobItemResource, JobItemList
+from .make import MakeResource, MakeList
 
 __all__ = [
+    "MakeResource", 
+    "MakeList",
     "JobItemResource", 
     "JobItemList",
     "JobResource", 
