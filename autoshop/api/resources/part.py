@@ -69,7 +69,11 @@ class PartList(Resource):
 
     def get(self):
         schema = PartSchema(many=True)
-        query = Part.query
+
+        if request.args.get("uuid") is not None:
+            query = Part.query.filter_by(uuid=request.args.get("uuid"))
+        else:
+            query = Part.query
         return paginate(query, schema)
 
     def post(self):
