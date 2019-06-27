@@ -86,7 +86,6 @@ class JobList(Resource):
             query = Job.query
         return paginate(query, schema)
 
-    @logger.catch
     def post(self):
         identity = get_jwt_identity()
 
