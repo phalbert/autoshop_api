@@ -7,17 +7,21 @@ from autoshop.extensions import db, ma
 from autoshop.models import Part, Entity, VehicleModel, PartCategory
 from autoshop.api.resources.part_category import PartCategorySchema
 from autoshop.api.resources.vehicle_model import VehicleModelSchema
+from autoshop.api.resources.entity import EntitySchema
+from autoshop.api.resources.vendor import VendorSchema
 
 class PartSchema(ma.ModelSchema):
     
+    entity = ma.Nested(EntitySchema, only=('name','address','email', 'phone'))
     category = ma.Nested(PartCategorySchema)
-    model = ma.Nested(VehicleModelSchema)
+    vendor = ma.Nested(VendorSchema)
 
     name = ma.String(required=True)
     code = ma.String(required=True)
     model_id = ma.String(required=True)
     category_id = ma.String(required=True)
     price = ma.Integer(required=True)
+    vendor_price = ma.Integer(required=True)
     quantity = ma.Integer(required=True)
     entity_id = ma.String(required=True)
 
