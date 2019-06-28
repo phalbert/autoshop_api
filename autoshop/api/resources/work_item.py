@@ -92,6 +92,7 @@ class WorkItemList(Resource):
         work_item.created_by = identity
 
         try:
+
             if not ServiceRequest.get(uuid=work_item.request_id):
                 return {"msg": "The supplied service request code doesnt exist"}, 422
             if WorkItem.get(request_id=work_item.request_id, item=work_item.item):
