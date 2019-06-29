@@ -47,6 +47,7 @@ def seed():
         name = 'Floben Autoshop',
         email = 'info@floben.ug',
         phone = '256770443322',
+        address = 'Ntinda',
         created_by = 1,
         date_created = datetime.datetime.now()
     )
