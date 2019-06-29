@@ -6,8 +6,10 @@ from flask import current_app as app
 from autoshop.app import create_app
 from autoshop.extensions import db
 from autoshop.commons.dbaccess import execute_sql
-from autoshop.models import User, Role, PaymentType, TransactionType
-
+from autoshop.models import (
+    User, Role, PaymentType, TransactionType, 
+    CustomerType, Entity
+)
 
 def create_autoshop(info):
     return create_app(cli=True)
@@ -34,11 +36,37 @@ def reset():
 
 @cli.command("seed")
 def seed():
+    import datetime
 
     fileDir = os.path.dirname(os.path.realpath("__file__"))
     filename = os.path.join(fileDir, "autoshop/sql/makes.sql")
     file = open(filename)
     execute_sql(file)
+
+    entity = Entity(
+        name = 'Floben Autoshop',
+        email = 'info@floben.ug',
+        phone = '256770443322',
+        created_by = 1,
+        date_created = datetime.datetime.now()
+    )
+
+    ctype = CustomerType(
+        uuid="in_fleet",
+        name="IN FLEET",
+        created_by=1,
+    )
+    ctype1 = CustomerType(
+        uuid="out_fleet",
+        name="OUT FLEET",
+        created_by=1,
+    )
+
+    db.session.add(entity)
+    db.session.add(ctype)
+    db.session.add(ctype1)
+    db.session.commit()
+
 
 @cli.command("recreate_views")
 def recreate_views():
