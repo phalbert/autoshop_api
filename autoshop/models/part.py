@@ -33,7 +33,7 @@ class Part(db.Model, BaseMixin, AuditableMixin):
     category_id = db.Column(db.String(50), db.ForeignKey('part_category.uuid'))
     model_id = db.Column(db.String(50))
     price = db.Column(db.String(50))
-    quantity = db.Column(db.String(50))
+    make_id = db.Column(db.String(50))
     entity_id = db.Column(db.String(50), db.ForeignKey('entity.uuid'))
     vendor_id = db.Column(db.String(50), db.ForeignKey('vendor.uuid'))
     vendor_price = db.Column(db.String(50))
