@@ -5,7 +5,6 @@ from autoshop.models.account import Account
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
 
-
 class Service(db.Model, BaseMixin, AuditableMixin):
     """Service model
     """
@@ -37,6 +36,7 @@ class ServiceRequest(db.Model, BaseMixin, AuditableMixin):
     service = db.relationship('Service')
     vehicle = db.relationship('Vehicle')
     entity = db.relationship('Entity')
+    job = db.relationship('Job')
 
     def __init__(self, **kwargs):
         super(ServiceRequest, self).__init__(**kwargs)
@@ -44,7 +44,7 @@ class ServiceRequest(db.Model, BaseMixin, AuditableMixin):
 
     def __repr__(self):
         return "<ServiceRequest %s>" % self.uuid
-
+  
 class WorkItem(db.Model, BaseMixin, AuditableMixin):
     request_id = db.Column(db.String(50), db.ForeignKey('service_request.uuid'))
     item = db.Column(db.String(50))
