@@ -29,12 +29,14 @@ from autoshop.api.resources import (
     EmployeeTypeResource, EmployeeTypeList,
     EmployeeResource, EmployeeList,
     JobResource, JobList, JobItemResource, JobItemList,
-    MakeResource, MakeList
+    MakeResource, MakeList, PartLogResource, PartLogList
 )
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
 api = Api(blueprint)
 
+api.add_resource(PartLogResource, "/part_logs/<int:part_log_id>")
+api.add_resource(PartLogList, "/part_logs")
 api.add_resource(MakeResource, "/brands/<int:make_id>")
 api.add_resource(MakeList, "/brands")
 api.add_resource(JobItemResource, "/job_items/<int:job_item_id>")

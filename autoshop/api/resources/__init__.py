@@ -31,8 +31,11 @@ from .employee import EmployeeResource, EmployeeList
 from .job import JobResource, JobList
 from .job_item import JobItemResource, JobItemList
 from .make import MakeResource, MakeList
+from .part_log import PartLogResource, PartLogList
 
 __all__ = [
+    "PartLogResource",
+    "PartLogList",
     "MakeResource", 
     "MakeList",
     "JobItemResource", 

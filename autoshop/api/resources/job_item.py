@@ -7,7 +7,7 @@ from sqlalchemy import and_
 
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
-from autoshop.models import JobItem, Job
+from autoshop.models import JobItem, Job, PartLog
 from autoshop.api.resources.job import JobSchema
 
 class JobItemSchema(ma.ModelSchema):
@@ -97,7 +97,20 @@ class JobItemList(Resource):
             if JobItem.get(job_id=job_item.job_id, item=job_item.item):
                 return {"msg": "The supplied job_item already exists"}, 409
             else:
+                part_log = PartLog (
+                    part_id = job_item.item,
+                    debit = job_item.item,
+                    credit = job_item.entity_id,
+                    reference = job_item.job_id,
+                    category = 'sale',
+                    quantity = job_item.quantity,
+                    amount = job_item.cost,
+                    unit_cost = job_item.unit_cost,
+                    entity_id = job_item.entity_id,
+                )
+
                 db.session.add(job_item)
+                db.session.add(part_log)
                 db.session.commit()
                 return (
                     {"msg": "job_item created", "job_item": schema.dump(job_item).data},

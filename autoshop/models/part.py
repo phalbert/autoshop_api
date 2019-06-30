@@ -1,9 +1,11 @@
 from flask_jwt_extended import get_jwt_identity
+from sqlalchemy import CheckConstraint
 
 from autoshop.extensions import db
 from autoshop.models.account import Account
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
+from autoshop.commons.dbaccess import query
 
 class PartCategory(db.Model, BaseMixin, AuditableMixin):
     name = db.Column(db.String(200), unique=True, nullable=False)
@@ -60,12 +62,22 @@ class Part(db.Model, BaseMixin, AuditableMixin):
 
 class PartLog(db.Model, BaseMixin, AuditableMixin):
     """Inventory log model to track usage
-    """
 
+    If a purchase is made, debit is vendor id and credit is part id
+    if a sale is mafe, debit is part id and credit is entity_id
+    """
+    
     part_id = db.Column(db.String(50), db.ForeignKey('part.uuid'))
-    job_id = db.Column(db.String(50))
-    quantity = db.Column(db.String(50))
+    reference = db.Column(db.String(50)) # job id or vendor id
+    category = db.Column(db.String(50)) # sale or purchase
+    credit = db.Column(db.String(50)) 
+    debit = db.Column(db.String(50))
+    quantity = db.Column(db.Integer)
+    unit_cost = db.Column(db.String(50))
+    amount = db.Column(db.Numeric(20, 2), CheckConstraint("amount > 0.0"))
     entity_id = db.Column(db.String(50), db.ForeignKey('entity.uuid'))
+    accounting_date = db.Column(db.Date, default=db.func.now())
+    accounting_period = db.Column(db.String(50), default=db.func.now())
     
     entity = db.relationship('Entity')
     part = db.relationship('Part')
@@ -75,5 +87,26 @@ class PartLog(db.Model, BaseMixin, AuditableMixin):
         self.get_uuid()
 
     def __repr__(self):
-        return "<PartLog %s>" % self.name
+        return "<PartLog %s>" % self.part_id
+    
+    @property
+    def debit_account(self):
+        sql = (
+            """ name FROM part_accounts where part_accounts.uuid ='"""
+            + str(self.debit) + """'
+            """
+        )
 
+        data = query(sql)
+        return data if data is None else data[0]["name"]
+
+    @property
+    def credit_account(self):
+
+        sql = (
+            """ name FROM part_accounts where part_accounts.uuid ='"""
+             + str(self.credit) + """'"""
+        )
+
+        data = query(sql)
+        return data if data is None else data[0]["name"]

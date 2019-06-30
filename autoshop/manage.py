@@ -51,23 +51,34 @@ def seed():
         created_by = 1,
         date_created = datetime.datetime.now()
     )
+    entity.save()
 
     ctype = CustomerType(
         uuid="in_fleet",
         name="IN FLEET",
         created_by=1,
+        entity_id=entity.uuid
     )
     ctype1 = CustomerType(
         uuid="out_fleet",
         name="OUT FLEET",
         created_by=1,
+        entity_id=entity.uuid
     )
 
-    db.session.add(entity)
     db.session.add(ctype)
     db.session.add(ctype1)
     db.session.commit()
 
+@cli.command("parts")
+def part_views():
+    """part_views create
+    """
+
+    fileDir = os.path.dirname(os.path.realpath("__file__"))
+    filename = os.path.join(fileDir, "autoshop/sql/parts.sql")
+    file = open(filename)
+    execute_sql(file)
 
 @cli.command("recreate_views")
 def recreate_views():
