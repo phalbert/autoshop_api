@@ -29,7 +29,7 @@ class PartSchema(ma.ModelSchema):
         model = Part
         sqla_session = db.session
 
-        additional = ("creator",)
+        additional = ("creator", "quantity")
 
 
 class PartResource(Resource):

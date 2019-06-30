@@ -4,7 +4,7 @@ SELECT 'vendor' as group, uuid, id, name FROM vendor UNION
 SELECT 'entity' as group, uuid, id, name FROM entity;
 
 
-CREATE VIEW part_ledger(
+CREATE OR REPLACE VIEW part_ledger(
 	entry_id,
     log_id,
     reference,
@@ -41,7 +41,7 @@ CREATE VIEW part_ledger(
 		part_log.credit,
 		part_log.part_id,
 		'debit',
-        part_log.quantity,
+        (0 - part_log.quantity),
 		(0.0 - part_log.amount),
 		part_log.entity_id,
 		part_log.date_created,
@@ -86,11 +86,11 @@ ON part_log
 FOR EACH STATEMENT
 EXECUTE PROCEDURE update_part_balances();
 
--- CREATE TRIGGER trigger_fix_balance_accounts
--- AFTER INSERT 
--- OR UPDATE OF uuid 
--- OR DELETE OR TRUNCATE
--- ON part_accounts
--- FOR EACH STATEMENT
--- EXECUTE PROCEDURE update_part_balances();
---  Views cannot have TRUNCATE triggers
+-- -- CREATE TRIGGER trigger_fix_balance_accounts
+-- -- AFTER INSERT 
+-- -- OR UPDATE OF uuid 
+-- -- OR DELETE OR TRUNCATE
+-- -- ON part_accounts
+-- -- FOR EACH STATEMENT
+-- -- EXECUTE PROCEDURE update_part_balances();
+-- --  Views cannot have TRUNCATE triggers

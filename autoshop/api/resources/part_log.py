@@ -15,6 +15,7 @@ class PartLogSchema(ma.ModelSchema):
 
     entity = ma.Nested(EntitySchema, only=('name','address','email', 'phone'))
     
+    part_id = ma.String(required=True)
     debit = ma.String(required=True)
     credit = ma.String(required=True)
     reference = ma.String(required=True)

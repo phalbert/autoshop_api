@@ -50,14 +50,17 @@ class Part(db.Model, BaseMixin, AuditableMixin):
 
     def __repr__(self):
         return "<Part %s>" % self.name
-
-    def increase(self, value=1):
-        self.quantity = self.quantity + value
-        return self.save()    
-
-    def descrease(self, value=1):
-        self.quantity = self.quantity + value
-        return self.save()  
+    
+    @property
+    def quantity(self):
+        """Get the part balance."""
+        try:
+            return query(" quantity from part_balances where uuid='" + str(self.uuid)
+            + "'")[0][
+                "quantity"
+            ]
+        except Exception:
+            return 0
 
 
 class PartLog(db.Model, BaseMixin, AuditableMixin):
