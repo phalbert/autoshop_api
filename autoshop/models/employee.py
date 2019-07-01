@@ -78,12 +78,13 @@ class Job(db.Model, BaseMixin, AuditableMixin):
 
 class JobItem(db.Model, BaseMixin, AuditableMixin):
     job_id = db.Column(db.String(50), db.ForeignKey('job.uuid'))
-    item = db.Column(db.String(50))
+    item = db.Column(db.String(50),  db.ForeignKey('part.uuid'))
     quantity = db.Column(db.String(50))
     unit_cost = db.Column(db.String(50))
     units = db.Column(db.String(50))
     entity_id = db.Column(db.String(50), db.ForeignKey('entity.uuid'))
-
+    
+    part = db.relationship('Part')
     job = db.relationship('Job')
     entity = db.relationship('Entity')
 
@@ -96,6 +97,13 @@ class JobItem(db.Model, BaseMixin, AuditableMixin):
 
     @property
     def cost(self):
+        try:
+            return int(self.quantity) * int(self.unit_cost)
+        except Exception as e:
+            return None
+    
+    @property
+    def part(self):
         try:
             return int(self.quantity) * int(self.unit_cost)
         except Exception as e:
