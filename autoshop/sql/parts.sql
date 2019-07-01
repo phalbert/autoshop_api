@@ -50,41 +50,41 @@ CREATE OR REPLACE VIEW part_ledger(
 	FROM
 		part_log;
 
--- CREATE MATERIALIZED VIEW part_balances(
--- 	-- Materialized so financial reports run fast.
--- 	-- Modification of accounts and part_log will require a
--- 	-- REFRESH MATERIALIZED VIEW, which we can trigger
--- 	-- automatically.
--- 	uuid, -- INTEGER REFERENCES accounts(id) NOT NULL UNIQUE
--- 	quantity, -- INTEGER NOT NULL
---     balance -- NUMERIC NOT NULL
--- ) AS
--- 	SELECT
--- 		part_accounts.uuid,
---         COALESCE(sum(part_ledger.quantity), 0.0),
--- 		COALESCE(sum(part_ledger.amount), 0.0)
--- 	FROM
--- 		part_accounts
--- 		LEFT OUTER JOIN part_ledger
--- 		ON part_accounts.uuid = part_ledger.account_id
--- 	GROUP BY part_accounts.uuid;
+CREATE MATERIALIZED VIEW part_balances(
+	-- Materialized so financial reports run fast.
+	-- Modification of accounts and part_log will require a
+	-- REFRESH MATERIALIZED VIEW, which we can trigger
+	-- automatically.
+	uuid, -- INTEGER REFERENCES accounts(id) NOT NULL UNIQUE
+	quantity, -- INTEGER NOT NULL
+    balance -- NUMERIC NOT NULL
+) AS
+	SELECT
+		part_accounts.uuid,
+        COALESCE(sum(part_ledger.quantity), 0.0),
+		COALESCE(sum(part_ledger.amount), 0.0)
+	FROM
+		part_accounts
+		LEFT OUTER JOIN part_ledger
+		ON part_accounts.uuid = part_ledger.account_id
+	GROUP BY part_accounts.uuid;
 
--- CREATE UNIQUE INDEX ON part_balances(uuid);
+CREATE UNIQUE INDEX ON part_balances(uuid);
 
--- CREATE OR REPLACE FUNCTION update_part_balances() RETURNS TRIGGER AS $$
--- BEGIN
--- 	REFRESH MATERIALIZED VIEW part_balances;
--- 	RETURN NULL;
--- END
--- $$ LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION update_part_balances() RETURNS TRIGGER AS $$
+BEGIN
+	REFRESH MATERIALIZED VIEW part_balances;
+	RETURN NULL;
+END
+$$ LANGUAGE plpgsql;
 
--- CREATE TRIGGER trigger_fix_balance_part_log
--- AFTER INSERT 
--- OR UPDATE OF quantity, amount, credit, debit 
--- OR DELETE OR TRUNCATE
--- ON part_log
--- FOR EACH STATEMENT
--- EXECUTE PROCEDURE update_part_balances();
+CREATE TRIGGER trigger_fix_balance_part_log
+AFTER INSERT 
+OR UPDATE OF quantity, amount, credit, debit 
+OR DELETE OR TRUNCATE
+ON part_log
+FOR EACH STATEMENT
+EXECUTE PROCEDURE update_part_balances();
 
 -- -- CREATE TRIGGER trigger_fix_balance_accounts
 -- -- AFTER INSERT 
