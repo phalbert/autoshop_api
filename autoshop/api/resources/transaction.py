@@ -15,7 +15,7 @@ class TransactionSchema(ma.ModelSchema):
 
     tranid = ma.String(required=True)
     reference = ma.String(required=True)
-    is_synchronous = ma.String(required=True)
+    is_synchronous = ma.Boolean(required=True)
     amount = ma.Integer(required=True)
     narration = ma.String(required=True)
     phone = ma.String(required=True)
@@ -100,8 +100,7 @@ class TransactionList(Resource):
         transaction, errors = schema.load(request.json)
         if errors:
             return errors, 422
-
-        transaction.is_synchronous = str2bool(request.json["is_synchronous"])
+        
         transaction.created_by = get_jwt_identity()
         transaction.vendor_id = User.get(id=transaction.created_by).company_id
 

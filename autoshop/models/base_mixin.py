@@ -69,7 +69,7 @@ class BaseMixin:
     def creator(self):
         try:
             sql = (
-                """ username
+                """ first_name + ' ' + last_name as username
             FROM users
             where users.id = """
                 + str(self.created_by)

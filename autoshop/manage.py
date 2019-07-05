@@ -8,7 +8,7 @@ from autoshop.extensions import db
 from autoshop.commons.dbaccess import execute_sql
 from autoshop.models import (
     User, Role, PaymentType, TransactionType, 
-    CustomerType, Entity
+    CustomerType, Entity, Account
 )
 
 def create_autoshop(info):
@@ -51,7 +51,16 @@ def seed():
         created_by = 1,
         date_created = datetime.datetime.now()
     )
-    entity.save()
+
+    account = Account(
+        owner_id=entity.uuid,
+        acc_type="entity",
+        created_by=1,
+        group=entity.uuid,
+    )
+
+    db.session.add(entity)
+    db.session.add(account)
 
     ctype = CustomerType(
         uuid="in_fleet",
