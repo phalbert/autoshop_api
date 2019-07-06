@@ -79,7 +79,26 @@ class Job(db.Model, BaseMixin, AuditableMixin):
 
     def __repr__(self):
         return "<Job %s>" % self.employee_id
+ 
+    @property
+    def time(self):
+        if self.completed_date:
+            import datetime
+            from dateutil.relativedelta import relativedelta
 
+            start = self.date_created
+            ends = self.completed_date
+
+            diff = relativedelta(start, ends)
+            return {
+                "years" : diff.years, 
+                "months" : diff.months, 
+                "days" : diff.days, 
+                "hours" : diff.hours, 
+                "minutes" : diff.minutes
+            }
+        else:
+            return None
 
 class JobItem(db.Model, BaseMixin, AuditableMixin):
     job_id = db.Column(db.String(50), db.ForeignKey("job.uuid"))

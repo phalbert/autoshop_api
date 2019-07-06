@@ -8,7 +8,7 @@ marshmallow-sqlalchemy
 python-dotenv
 passlib
 tox
-
+python-dateutil
 colors.py
 psycopg2-binary
 psycopg2

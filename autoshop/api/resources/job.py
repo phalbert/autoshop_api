@@ -30,7 +30,8 @@ class JobSchema(ma.ModelSchema):
 
         model = Job
         sqla_session = db.session
-
+        
+        additional = ("creator", "time")
 
 class JobResource(Resource):
 
@@ -54,6 +55,10 @@ class JobResource(Resource):
             return (errors, 422)
 
         job.modified_by = identity
+        if job.is_complete:
+            from datetime import datetime
+            job.completed_date = datetime.now()
+
 
         try:
             db.session.commit()
