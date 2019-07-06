@@ -52,7 +52,8 @@ class Entry(db.Model):
         sql = (
             """ name FROM accounts INNER JOIN account_holders on
             account_holders.uuid=accounts.owner_id where accounts.id = """
-            + str(self.debit) + """
+            + str(self.debit)
+            + """
             """
         )
 
@@ -68,7 +69,9 @@ class Entry(db.Model):
         sql = (
             """ name FROM accounts INNER JOIN account_holders on
             account_holders.uuid=accounts.owner_id where accounts.id =
-            """ + str(self.credit) + """ """
+            """
+            + str(self.credit)
+            + """ """
         )
 
         data = query(sql)
@@ -166,7 +169,7 @@ class Entry(db.Model):
 
 class Transaction(db.Model, BaseMixin, AuditableMixin):
     tranid = db.Column(db.String(50))
-    reference = db.Column(db.String(50)) # customer/vendor id
+    reference = db.Column(db.String(50))  # customer/vendor id
     vendor_id = db.Column(db.String(50))
     phone = db.Column(db.String(50))
     category = db.Column(db.String(50))

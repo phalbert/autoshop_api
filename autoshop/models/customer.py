@@ -1,4 +1,3 @@
-
 from autoshop.extensions import db
 from autoshop.models.account import Account
 from autoshop.models.audit_mixin import AuditableMixin

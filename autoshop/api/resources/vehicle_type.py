@@ -9,7 +9,6 @@ from autoshop.models import VehicleType
 
 class VehicleTypeSchema(ma.ModelSchema):
 
-
     class Meta:
         model = VehicleType
         sqla_session = db.session

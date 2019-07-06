@@ -6,7 +6,7 @@ from .entity import Entity, Vendor
 from .entry import Entry, Transaction
 from .setting import PaymentType, Setting, TransactionType, CustomerType
 from .user import Role, User
-from .vehicle import Vehicle, VehicleModel, VehicleType, Make
+from .vehicle import Vehicle, VehicleModel, VehicleType
 from .access_log import AccessLog
 from .service import Service, ServiceRequest, WorkItem
 from .part import Part, PartLog, PartCategory
@@ -17,8 +17,8 @@ __all__ = [
     "EmployeeType",
     "Job",
     "JobItem",
-    "Part", 
-    "PartLog", 
+    "Part",
+    "PartLog",
     "PartCategory",
     "User",
     "Role",
@@ -41,7 +41,7 @@ __all__ = [
     "Vehicle",
     "VehicleModel",
     "VehicleType",
-    "Service", 
-    "ServiceRequest", 
-    "WorkItem"
+    "Service",
+    "ServiceRequest",
+    "WorkItem",
 ]

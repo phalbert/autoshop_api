@@ -6,13 +6,13 @@ from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
 from autoshop.models import Part, Entity, VehicleModel, PartCategory
 from autoshop.api.resources.part_category import PartCategorySchema
-from autoshop.api.resources.vehicle_model import VehicleModelSchema
 from autoshop.api.resources.entity import EntitySchema
 from autoshop.api.resources.vendor import VendorSchema
 
+
 class PartSchema(ma.ModelSchema):
-    
-    entity = ma.Nested(EntitySchema, only=('name','address','email', 'phone'))
+
+    entity = ma.Nested(EntitySchema, only=('name', 'address', 'email', 'phone'))
     category = ma.Nested(PartCategorySchema)
     vendor = ma.Nested(VendorSchema)
 
@@ -83,9 +83,9 @@ class PartList(Resource):
             return errors, 422
 
         part.created_by = get_jwt_identity()
-        
+
         if not Entity.get(uuid=part.entity_id):
-            return {"msg": "The supplied entity id does not exist"}, 422        
+            return {"msg": "The supplied entity id does not exist"}, 422
         if Part.get(name=part.name):
             return {"msg": "The supplied name already exists"}, 409
         if not VehicleModel.get(uuid=part.model_id):

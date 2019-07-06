@@ -7,14 +7,15 @@ from flask_restful import Resource
 from autoshop.api.resources.entity import EntitySchema
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
-from autoshop.models import Account, PartLog, Vendor
+from autoshop.models import PartLog, Vendor
 from autoshop.api.resources.part import PartSchema
 
-class PartLogSchema(ma.ModelSchema):
-    part = ma.Nested(PartSchema, only=('name','vendor_price'))
 
-    entity = ma.Nested(EntitySchema, only=('name','address','email', 'phone'))
-    
+class PartLogSchema(ma.ModelSchema):
+    part = ma.Nested(PartSchema, only=('name', 'vendor_price'))
+
+    entity = ma.Nested(EntitySchema, only=('name', 'address', 'email', 'phone'))
+
     part_id = ma.String(required=True)
     debit = ma.String(required=True)
     credit = ma.String(required=True)

@@ -12,7 +12,7 @@ from autoshop.models import Account, Customer, Entity, CustomerType
 class CustomerSchema(ma.ModelSchema):
 
     account = ma.Nested(AccountSchema)
-    
+
     type_id = ma.String(required=True)
     entity_id = ma.String(required=True)
     name = ma.String(required=True)
@@ -108,7 +108,7 @@ class CustomerList(Resource):
             if Customer.get(phone=customer.phone, entity_id=customer.entity_id):
                 return {"msg": "The supplied customer phone already exists"}, 409
             else:
-                
+
                 customer.log("A")
 
                 account = Account(

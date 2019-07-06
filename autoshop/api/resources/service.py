@@ -5,7 +5,7 @@ from marshmallow import validate
 
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
-from autoshop.models import Entity, Service, TransactionType
+from autoshop.models import Service
 
 
 class ServiceSchema(ma.ModelSchema):
@@ -20,6 +20,7 @@ class ServiceSchema(ma.ModelSchema):
         sqla_session = db.session
 
         additional = ('creator', )
+
 
 class ServiceResource(Resource):
     """Single object resource

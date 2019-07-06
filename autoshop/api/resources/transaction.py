@@ -5,7 +5,7 @@ from flask_restful import Resource
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
 from autoshop.models import (
-    Account, Customer, Entry, 
+    Account, Customer, Entry,
     PaymentType, Transaction, User,
     TransactionType
 )
@@ -100,7 +100,7 @@ class TransactionList(Resource):
         transaction, errors = schema.load(request.json)
         if errors:
             return errors, 422
-        
+
         transaction.created_by = get_jwt_identity()
         transaction.vendor_id = User.get(id=transaction.created_by).company_id
 

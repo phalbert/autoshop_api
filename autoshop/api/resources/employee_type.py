@@ -94,7 +94,7 @@ class EmployeeTypeList(Resource):
 
         try:
             employee_type.created_by = get_jwt_identity()
-            
+
             if not Entity.get(uuid=employee_type.entity_id):
                 return {"msg": "Entity not found"}, 422
             if EmployeeType.get(

@@ -23,15 +23,7 @@ import datetime
 import json
 
 from flask_jwt_extended import get_jwt_identity
-from sqlalchemy import (
-    Column,
-    DateTime,
-    Integer,
-    String,
-    UnicodeText,
-    event,
-    inspect,
-)
+from sqlalchemy import Column, DateTime, Integer, String, UnicodeText, event, inspect
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm.attributes import get_history
 
