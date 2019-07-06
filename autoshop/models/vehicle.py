@@ -73,6 +73,8 @@ class Vehicle(db.Model, BaseMixin, AuditableMixin):
     customer = db.relationship("Customer", back_populates="vehicles")
     vehicle_model = db.relationship('VehicleModel')
 
+    
+
     def __init__(self, **kwargs):
         super(Vehicle, self).__init__(**kwargs)
         self.get_uuid()

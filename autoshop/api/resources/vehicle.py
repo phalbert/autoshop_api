@@ -6,9 +6,12 @@ from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
 from autoshop.models import Vehicle, VehicleModel, Customer
 from autoshop.api.resources.vehicle_model import VehicleModelSchema
+from autoshop.api.resources.customer import CustomerSchema
 
 class VehicleSchema(ma.ModelSchema):
     vehicle_model = ma.Nested(VehicleModelSchema)
+    customer = ma.Nested(CustomerSchema, only=('name','address','email', 'phone'))
+    
 
     registration_no = ma.String(required=True)
     chassis_no = ma.String(required=True)
