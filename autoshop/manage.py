@@ -194,5 +194,6 @@ def init():
     db.session.commit()
     click.echo('created user admin')
 
+
 if __name__ == '__main__':
     cli()

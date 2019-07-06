@@ -5,7 +5,7 @@ from marshmallow import validate
 
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
-from autoshop.models import Employee ,Entity, EmployeeType
+from autoshop.models import Employee, Entity, EmployeeType
 
 
 class EmployeeSchema(ma.ModelSchema):
@@ -57,7 +57,6 @@ class EmployeeResource(Resource):
         employee = Employee.query.get_or_404(employee_id)
         db.session.delete(employee)
         db.session.commit()
-
         return {"msg": "employee deleted"}
 
 

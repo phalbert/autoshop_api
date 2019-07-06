@@ -6,7 +6,7 @@ from autoshop.models.entity import Entity
 
 class EmployeeType(db.Model, BaseMixin, AuditableMixin):
     """"
-       mechanic, finance, 
+       mechanic, finance,
     """
 
     name = db.Column(db.String(50), unique=True, nullable=False)
@@ -55,7 +55,7 @@ class Employee(db.Model, BaseMixin, AuditableMixin):
 
 class Job(db.Model, BaseMixin, AuditableMixin):
     """"
-       job cards 
+       job cards
     """
 
     employee_id = db.Column(
