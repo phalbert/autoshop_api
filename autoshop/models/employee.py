@@ -89,13 +89,14 @@ class Job(db.Model, BaseMixin, AuditableMixin):
             start = self.date_created
             ends = self.completed_date
 
-            diff = relativedelta(start, ends)
+            diff = relativedelta(ends, start)
             return {
                 "years" : diff.years, 
                 "months" : diff.months, 
                 "days" : diff.days, 
                 "hours" : diff.hours, 
-                "minutes" : diff.minutes
+                "minutes" : diff.minutes,
+                "word": "%d year %d month %d days %d hours %d minutes" % (diff.years, diff.months, diff.days, diff.hours, diff.minutes)
             }
         else:
             return None
