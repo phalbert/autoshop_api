@@ -64,8 +64,8 @@ def seed():
     ctype1 = CustomerType(uuid='out_fleet', name='OUT FLEET',
                           created_by=1, entity_id=entity.uuid)
 
-    db.session.add(ctype)
     db.session.add(ctype1)
+    db.session.add(ctype)
     db.session.commit()
 
 
@@ -144,6 +144,11 @@ def init():
     filename2 = os.path.join(fileDir, 'autoshop/sql/views.sql')
     file2 = open(filename2)
     execute_sql(file2)
+
+    fileDir = os.path.dirname(os.path.realpath('__file__'))
+    filename = os.path.join(fileDir, 'autoshop/sql/parts.sql')
+    file = open(filename)
+    execute_sql(file)
 
     click.echo('create user')
     role = Role(uuid='system_admin', name='System Admin',

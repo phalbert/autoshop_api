@@ -24,6 +24,7 @@ class Entry(db.Model):
     credit = db.Column(db.Integer, db.ForeignKey("accounts.id", ondelete="RESTRICT"))
     tran_type = db.Column(db.String(50))
     phone = db.Column(db.String(50))
+    category = db.Column(db.String(50))
     pay_type = db.Column(db.String(50))
     description = db.Column(db.String(4000))
     cheque_number = db.Column(db.String(80))

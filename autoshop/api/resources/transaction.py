@@ -127,6 +127,7 @@ class TransactionList(Resource):
                 entity_id=transaction.entity_id,
                 description=transaction.narration,
                 tran_type=transaction.tran_type,
+                category=transaction.category,
                 pay_type=transaction.pay_type,
             )
 
