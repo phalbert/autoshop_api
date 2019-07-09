@@ -13,7 +13,7 @@ class AccountSchema(ma.ModelSchema):
         model = Account
         sqla_session = db.session
 
-        additional = ("creator", "balance", "name")
+        additional = ("creator", "balance", "name", "wallets")
 
 
 class AccountResource(Resource):

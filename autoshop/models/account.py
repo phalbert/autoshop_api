@@ -78,14 +78,14 @@ class Account(db.Model, BaseMixin, AuditableMixin):
         this is the summation of all entries under a category
         """
         sql = (
-            """ accounts.id,account_ledgers.category,category.name,
+            """ accounts.id,account_ledgers.category,vehicle.registration_no,
         COALESCE(sum(account_ledgers.amount), 0.0) as balance FROM accounts
         LEFT OUTER JOIN account_ledgers ON accounts.id = account_ledgers.account_id
-        INNER JOIN category on category.uuid=account_ledgers.category where
-        accounts.id = """
+        INNER JOIN vehicle on vehicle.uuid=account_ledgers.category where
+        acc_type='customer' and accounts.id = """
             + str(self.id)
             + """
-        GROUP BY accounts.id,account_ledgers.category,category.name """
+        GROUP BY accounts.id,account_ledgers.category,vehicle.registration_no """
         )
 
         wallets = query(sql)
