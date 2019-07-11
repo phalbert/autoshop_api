@@ -101,6 +101,43 @@ class Job(db.Model, BaseMixin, AuditableMixin):
         else:
             return None
 
+    def complete(self):
+        from autoshop.models.part import Part,  PartLog
+        from autoshop.commons.util import random_tran_id
+
+        job = Job.get(uuid=self.uuid)
+
+        hours = job.time['hours']
+        days_in_hours = job.time['days'] * 24
+        
+        time = hours + days_in_hours
+
+
+        part = Part.get(code='labour')
+        log = PartLog(
+            part_id=part.uuid,
+            debit=part.uuid,
+            credit=part.entity_id,
+            reference=random_tran_id(),
+            category='sale',
+            quantity=time,
+            unit_cost=part.price,
+            amount=time * int(part.price),          
+            entity_id=part.entity_id
+        )
+
+        item = JobItem(
+            job_id=self.uuid,
+            item=part.uuid,
+            quantity=time,
+            unit_cost=part.price,
+            entity_id=part.entity_id
+        )
+
+        db.session.add(item)
+        db.session.add(log)
+        db.session.commit()
+
 class JobItem(db.Model, BaseMixin, AuditableMixin):
     job_id = db.Column(db.String(50), db.ForeignKey("job.uuid"))
     item = db.Column(db.String(50), db.ForeignKey("part.uuid"))
@@ -119,7 +156,7 @@ class JobItem(db.Model, BaseMixin, AuditableMixin):
 
     def __repr__(self):
         return "<JobItem %s>" % self.uuid
-
+   
     @property
     def cost(self):
         try:
@@ -127,9 +164,3 @@ class JobItem(db.Model, BaseMixin, AuditableMixin):
         except Exception:
             return None
 
-    @property
-    def part(self):
-        try:
-            return int(self.quantity) * int(self.unit_cost)
-        except Exception:
-            return None

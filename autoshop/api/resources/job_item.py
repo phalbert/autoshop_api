@@ -9,12 +9,14 @@ from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
 from autoshop.models import JobItem, Job, PartLog
 from autoshop.api.resources.job import JobSchema
+from autoshop.api.resources.part import PartSchema
 
 
 class JobItemSchema(ma.ModelSchema):
-
+    part = ma.Nested(PartSchema, only=('id', 'name', 'price'))
     job = ma.Nested(JobSchema, only=('id', 'employee_id', 'request_id',
                                      'is_complete'))
+                                     
     not_empty = validate.Length(min=1, max=50,
                                 error='Field cant be empty.')
 

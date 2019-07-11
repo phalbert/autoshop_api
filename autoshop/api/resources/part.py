@@ -38,14 +38,14 @@ class PartResource(Resource):
 
     method_decorators = [jwt_required]
 
-    def get(self, setting_id):
+    def get(self, part_id):
         schema = PartSchema()
-        part = Part.query.get_or_404(setting_id)
+        part = Part.query.get_or_404(part_id)
         return {"part": schema.dump(part).data}
 
-    def put(self, setting_id):
+    def put(self, part_id):
         schema = PartSchema(partial=True)
-        part = Part.query.get_or_404(setting_id)
+        part = Part.query.get_or_404(part_id)
         part, errors = schema.load(request.json, instance=part)
         if errors:
             return errors, 422
@@ -53,8 +53,8 @@ class PartResource(Resource):
         db.session.commit()
         return {"msg": "part updated", "part": schema.dump(part).data}
 
-    def delete(self, setting_id):
-        part = Part.query.get_or_404(setting_id)
+    def delete(self, part_id):
+        part = Part.query.get_or_404(part_id)
         db.session.delete(part)
         db.session.commit()
 
@@ -88,6 +88,8 @@ class PartList(Resource):
             return {"msg": "The supplied entity id does not exist"}, 422
         if Part.get(name=part.name):
             return {"msg": "The supplied name already exists"}, 409
+        if Part.get(code=part.code):
+            return {"msg": "The supplied code already exists"}, 409
         if not VehicleModel.get(uuid=part.model_id):
             return {"msg": "The supplied vehicle model doesnt exist"}, 422
         if not PartCategory.get(uuid=part.category_id):

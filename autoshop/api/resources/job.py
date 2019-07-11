@@ -58,6 +58,7 @@ class JobResource(Resource):
         if job.is_complete:
             from datetime import datetime
             job.completed_date = datetime.now()
+            job.complete()
 
 
         try:

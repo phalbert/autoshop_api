@@ -135,6 +135,7 @@ class Entry(db.Model):
 
     def transact(self):
         entries = self.get_entries()
+
         for entr in entries:
             db.session.add(entr)
         db.session.commit()
