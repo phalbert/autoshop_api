@@ -113,7 +113,7 @@ class Job(db.Model, BaseMixin, AuditableMixin):
         time = hours + days_in_hours
 
         if time == 0 and job.time['minutes'] > 0:
-            time == 1
+            time = 1
 
 
         part = Part.get(code='labour')
