@@ -10,12 +10,9 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin):
     """Basic LPO model
     """
 
-    part_id = db.Column(db.String(80), db.ForeignKey("part.uuid"), nullable=False)
-    quantity = db.Column(db.String(50))
     entity_id = db.Column(db.String(50), db.ForeignKey("entity.uuid"), nullable=False)
     vendor_id = db.Column(db.String(50), db.ForeignKey("vendor.uuid"), nullable=False)
     
-    part = db.relationship('Part')
     entity = db.relationship('Entity')
     vendor = db.relationship('Vendor')
 
@@ -25,3 +22,20 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin):
 
     def __repr__(self):
         return "<LocalPurchaseOrder %s>" % self.uuid
+
+class LpoItem(db.Model, BaseMixin, AuditableMixin):
+    order_id = db.Column(db.String(50), db.ForeignKey('local_purchase_order.uuid'))
+    part_id = db.Column(db.String(80), db.ForeignKey("part.uuid"), nullable=False)
+    quantity = db.Column(db.String(50))  
+    entity_id = db.Column(db.String(50), db.ForeignKey('entity.uuid'))
+    
+    part = db.relationship('Part')
+    order = db.relationship('LocalPurchaseOrder')
+    entity = db.relationship('Entity')
+
+    def __init__(self, **kwargs):
+        super(LpoItem, self).__init__(**kwargs)
+        self.get_uuid()
+
+    def __repr__(self):
+        return "<LpoItem %s>" % self.uuid
