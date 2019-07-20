@@ -38,11 +38,8 @@ class Part(db.Model, BaseMixin, AuditableMixin):
     price = db.Column(db.String(50))
     make_id = db.Column(db.String(50))
     entity_id = db.Column(db.String(50), db.ForeignKey("entity.uuid"))
-    vendor_id = db.Column(db.String(50), db.ForeignKey("vendor.uuid"))
-    vendor_price = db.Column(db.String(50))
 
     entity = db.relationship("Entity")
-    vendor = db.relationship("Vendor")
     category = db.relationship("PartCategory")
 
     def __init__(self, **kwargs):

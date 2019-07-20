@@ -21,7 +21,6 @@ class PartSchema(ma.ModelSchema):
     model_id = ma.String(required=True)
     category_id = ma.String(required=True)
     price = ma.Integer(required=True)
-    vendor_price = ma.Integer(required=True)
     make_id = ma.Integer(required=True)
     entity_id = ma.String(required=True)
 
