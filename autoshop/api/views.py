@@ -3,7 +3,6 @@
 from flask import Blueprint
 from flask_restful import Api
 
-<<<<<<< HEAD
 from autoshop.api.resources import (
     AccountEntriesList,AccountEntriesResource,
     AccountList,AccountResource,
@@ -36,31 +35,10 @@ from autoshop.api.resources import (
     LocalPurchaseOrderList, LocalPurchaseOrderResource,
     LpoItemList, LpoItemResource
 )
-=======
-from autoshop.api.resources import AccountEntriesList, \
-    AccountEntriesResource, AccountList, AccountResource, \
-    AccountTypeList, AccountTypeResource, VehicleList, VehicleResource, \
-    CustomerList, CustomerResource, EntityList, EntityResource, \
-    EntityVendorList, EntityVendorResource, EntryList, EntryResource, \
-    PaymentTypeList, PaymentTypeResource, CustomerTypeList, \
-    CustomerTypeResource, QueryList, RoleList, RoleResource, \
-    SearchList, SettingList, SettingResource, VehicleModelList, \
-    VehicleModelResource, TransactionList, TransactionResource, \
-    TransactionTypeList, TransactionTypeResource, UserList, \
-    UserResource, VendorList, VendorResource, VehicleTypeResource, \
-    VehicleTypeList, AccessLogResource, AccessLogList, ServiceResource, \
-    ServiceList, ServiceRequestResource, ServiceRequestList, \
-    WorkItemResource, WorkItemList, PartResource, PartList, \
-    PartCategoryResource, PartCategoryList, EmployeeTypeResource, \
-    EmployeeTypeList, EmployeeResource, EmployeeList, JobResource, \
-    JobList, JobItemResource, JobItemList, MakeResource, MakeList, \
-    PartLogResource, PartLogList
->>>>>>> 5c81c4923ad3f85e526669e0b069e108294e9364
 
 blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
 api = Api(blueprint)
 
-<<<<<<< HEAD
 api.add_resource(LpoItemResource, "/lpo_items/<int:lpo_item_id>")
 api.add_resource(LpoItemList, "/lpo_items")
 api.add_resource(LocalPurchaseOrderResource, "/lpos/<int:lpo_id>")
@@ -87,33 +65,6 @@ api.add_resource(ServiceRequestResource, "/service_requests/<int:service_request
 api.add_resource(ServiceRequestList, "/service_requests")
 api.add_resource(WorkItemResource, "/work_items/<int:work_item_id>")
 api.add_resource(WorkItemList, "/work_items")
-=======
-api.add_resource(PartLogResource, '/part_logs/<int:part_log_id>')
-api.add_resource(PartLogList, '/part_logs')
-api.add_resource(MakeResource, '/brands/<int:make_id>')
-api.add_resource(MakeList, '/brands')
-api.add_resource(JobItemResource, '/job_items/<int:job_item_id>')
-api.add_resource(JobItemList, '/job_items')
-api.add_resource(JobResource, '/jobs/<int:job_id>')
-api.add_resource(JobList, '/jobs')
-api.add_resource(EmployeeResource, '/employees/<int:employee_id>')
-api.add_resource(EmployeeList, '/employees')
-api.add_resource(EmployeeTypeResource,
-                 '/employee_types/<int:employee_type_id>')
-api.add_resource(EmployeeTypeList, '/employee_types')
-api.add_resource(PartCategoryResource,
-                 '/part_categories/<int:part_category_id>')
-api.add_resource(PartCategoryList, '/part_categories')
-api.add_resource(PartResource, '/parts/<int:part_id>')
-api.add_resource(PartList, '/parts')
-api.add_resource(ServiceResource, '/services/<int:service_id>')
-api.add_resource(ServiceList, '/services')
-api.add_resource(ServiceRequestResource,
-                 '/service_requests/<int:service_request_id>')
-api.add_resource(ServiceRequestList, '/service_requests')
-api.add_resource(WorkItemResource, '/work_items/<int:work_item_id>')
-api.add_resource(WorkItemList, '/work_items')
->>>>>>> 5c81c4923ad3f85e526669e0b069e108294e9364
 
 api.add_resource(UserResource, '/users/<int:user_id>')
 api.add_resource(UserList, '/users')
