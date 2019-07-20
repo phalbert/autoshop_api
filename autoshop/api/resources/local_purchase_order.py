@@ -8,14 +8,11 @@ from autoshop.api.resources.entity import EntitySchema
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
 from autoshop.models import Account, LocalPurchaseOrder, Vendor
-from autoshop.api.resources.part import PartSchema
-
+from autoshop.api.resources.vendor import VendorSchema
 class LocalPurchaseOrderSchema(ma.ModelSchema):
-    part = ma.Nested(PartSchema, only=('name','vendor_price'))
     entity = ma.Nested(EntitySchema, only=('name','address','email', 'phone'))
+    vendor = ma.Nested(VendorSchema, only=('name','address','email', 'phone'))
     
-    part_id = ma.String(required=True)
-    quantity = ma.Integer(required=True)
     vendor_id = ma.String(required=True)
     entity_id = ma.String(required=True)
 
@@ -78,7 +75,7 @@ class LocalPurchaseOrderList(Resource):
             query = LocalPurchaseOrder.query.filter_by(reference=request.args.get("reference"))
         else:
             query = LocalPurchaseOrder.query
-        query = query.order_by(LocalPurchaseOrder.date_created.desc(), LocalPurchaseOrder.amount.desc())
+        query = query.order_by(LocalPurchaseOrder.date_created.desc())
         return paginate(query, schema)
 
     def post(self):

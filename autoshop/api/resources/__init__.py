@@ -32,8 +32,14 @@ from .job import JobResource, JobList
 from .job_item import JobItemResource, JobItemList
 from .make import MakeResource, MakeList
 from .part_log import PartLogResource, PartLogList
+from .local_purchase_order import LocalPurchaseOrderResource, LocalPurchaseOrderList
+from .lpo_item import LpoItemResource, LpoItemList
 
 __all__ = [
+    "LocalPurchaseOrderResource",
+    "LocalPurchaseOrderList",
+    "LpoItemResource",
+    "LpoItemList",
     "PartLogResource",
     "PartLogList",
     "MakeResource", 

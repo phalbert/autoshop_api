@@ -9,9 +9,11 @@ from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
 from autoshop.models import LpoItem, LocalPurchaseOrder, Part
 from autoshop.api.resources.local_purchase_order import LocalPurchaseOrderSchema
+from autoshop.api.resources.part import PartSchema
 
 class LpoItemSchema(ma.ModelSchema):
-    lpo = ma.Nested(LocalPurchaseOrderSchema, only=('id','employee_id', 'request_id', 'is_complete'))
+    part = ma.Nested(PartSchema, only=('name','vendor_price'))
+    order = ma.Nested(LocalPurchaseOrderSchema, only=('id','uuid', 'vendor_id'))
     not_empty = validate.Length(min=1, max=50, error="Field cant be empty.")
     
     order_id = ma.String(required=True)
