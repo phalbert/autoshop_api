@@ -71,7 +71,7 @@ class UserList(Resource):
         user, errors = schema.load(request.json)
         if errors:
             return errors, 422
-        
+
         user.created_by = get_jwt_identity()
 
         db.session.add(user)

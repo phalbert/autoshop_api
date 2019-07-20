@@ -5,7 +5,7 @@ from marshmallow import validate
 
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
-from autoshop.models import Account, Employee, Entity, EmployeeType
+from autoshop.models import Employee, Entity, EmployeeType
 
 
 class EmployeeSchema(ma.ModelSchema):
@@ -57,7 +57,6 @@ class EmployeeResource(Resource):
         employee = Employee.query.get_or_404(employee_id)
         db.session.delete(employee)
         db.session.commit()
-
         return {"msg": "employee deleted"}
 
 
@@ -105,7 +104,7 @@ class EmployeeList(Resource):
             if Employee.get(phone=employee.phone, entity_id=employee.entity_id):
                 return {"msg": "The supplied employee phone already exists"}, 409
             else:
-                
+
                 db.session.add(employee)
                 db.session.commit()
 

@@ -7,6 +7,7 @@ from autoshop.extensions import db, ma
 from autoshop.models import VehicleModel, VehicleType
 from autoshop.api.resources.vehicle_type import VehicleTypeSchema
 
+
 class VehicleModelSchema(ma.ModelSchema):
     type = ma.Nested(VehicleTypeSchema)
 
@@ -71,7 +72,7 @@ class VehicleModelList(Resource):
             return errors, 422
 
         vehicle_model.created_by = get_jwt_identity()
-        
+
         if not VehicleType.get(uuid=vehicle_model.type_id):
             return {"msg": "The supplied vehicle type doesnt exist"}, 409
         if VehicleModel.get(name=vehicle_model.name):

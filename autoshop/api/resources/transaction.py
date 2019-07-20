@@ -5,7 +5,7 @@ from flask_restful import Resource
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
 from autoshop.models import (
-    Account, Customer, Entry, 
+    Account, Customer, Entry,
     PaymentType, Transaction, User,
     TransactionType
 )
@@ -15,7 +15,7 @@ class TransactionSchema(ma.ModelSchema):
 
     tranid = ma.String(required=True)
     reference = ma.String(required=True)
-    is_synchronous = ma.String(required=True)
+    is_synchronous = ma.Boolean(required=True)
     amount = ma.Integer(required=True)
     narration = ma.String(required=True)
     phone = ma.String(required=True)
@@ -101,7 +101,6 @@ class TransactionList(Resource):
         if errors:
             return errors, 422
 
-        transaction.is_synchronous = str2bool(request.json["is_synchronous"])
         transaction.created_by = get_jwt_identity()
         transaction.vendor_id = User.get(id=transaction.created_by).company_id
 
@@ -128,6 +127,7 @@ class TransactionList(Resource):
                 entity_id=transaction.entity_id,
                 description=transaction.narration,
                 tran_type=transaction.tran_type,
+                category=transaction.category,
                 pay_type=transaction.pay_type,
             )
 

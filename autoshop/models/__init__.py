@@ -16,12 +16,13 @@ from .local_purchase_order import LocalPurchaseOrder, LpoItem
 __all__ = [
     "LpoItem",
     "LocalPurchaseOrder",
+    "Make",
     "Employee",
     "EmployeeType",
     "Job",
     "JobItem",
-    "Part", 
-    "PartLog", 
+    "Part",
+    "PartLog",
     "PartCategory",
     "User",
     "Role",
@@ -44,7 +45,7 @@ __all__ = [
     "Vehicle",
     "VehicleModel",
     "VehicleType",
-    "Service", 
-    "ServiceRequest", 
-    "WorkItem"
+    "Service",
+    "ServiceRequest",
+    "WorkItem",
 ]

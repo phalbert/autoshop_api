@@ -5,7 +5,7 @@ from random import choice, randint
 
 from autoshop.commons.dbaccess import query
 from autoshop.extensions import db
-from sqlalchemy.ext.declarative import declared_attr
+
 
 class PersonMixin:
     first_name = db.Column(db.String(50))
@@ -26,12 +26,12 @@ class BaseMixin:
         default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp(),
     )
-    
+
     # @declared_attr
     # def user_id(cls):
     #     return db.Column(
     #         db.String(50), db.ForeignKey("users.id"), nullable=False
-    #     ) 
+    #     )
 
     # @declared_attr
     # def user(cls):
@@ -69,7 +69,7 @@ class BaseMixin:
     def creator(self):
         try:
             sql = (
-                """ username
+                """ first_name + ' ' + last_name as username
             FROM users
             where users.id = """
                 + str(self.created_by)

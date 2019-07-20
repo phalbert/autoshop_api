@@ -1,11 +1,10 @@
-from flask_jwt_extended import get_jwt_identity
 from sqlalchemy import CheckConstraint
 
 from autoshop.extensions import db
-from autoshop.models.account import Account
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
 from autoshop.commons.dbaccess import query
+
 
 class PartCategory(db.Model, BaseMixin, AuditableMixin):
     name = db.Column(db.String(200), unique=True, nullable=False)
@@ -18,31 +17,33 @@ class PartCategory(db.Model, BaseMixin, AuditableMixin):
 
     def __repr__(self):
         return "<PartCategory %s>" % self.name
- 
+
     @property
     def parent(self):
-        if self.parent_id and self.parent_id != '0':
+        if self.parent_id and self.parent_id != "0":
             return PartCategory.get(uuid=self.parent_id).name
         else:
             return None
 
+
 class Part(db.Model, BaseMixin, AuditableMixin):
     """Inventory model
     """
-    code = db.Column(db.String(200), nullable=False) # part number
+
+    code = db.Column(db.String(200), nullable=False)  # part number
     name = db.Column(db.String(200), unique=True, nullable=False)
     description = db.Column(db.String(2000))
-    category_id = db.Column(db.String(50), db.ForeignKey('part_category.uuid'))
+    category_id = db.Column(db.String(50), db.ForeignKey("part_category.uuid"))
     model_id = db.Column(db.String(50))
     price = db.Column(db.String(50))
     make_id = db.Column(db.String(50))
-    entity_id = db.Column(db.String(50), db.ForeignKey('entity.uuid'))
-    vendor_id = db.Column(db.String(50), db.ForeignKey('vendor.uuid'))
+    entity_id = db.Column(db.String(50), db.ForeignKey("entity.uuid"))
+    vendor_id = db.Column(db.String(50), db.ForeignKey("vendor.uuid"))
     vendor_price = db.Column(db.String(50))
-    
-    entity = db.relationship('Entity')
-    vendor = db.relationship('Vendor')
-    category = db.relationship('PartCategory')
+
+    entity = db.relationship("Entity")
+    vendor = db.relationship("Vendor")
+    category = db.relationship("PartCategory")
 
     def __init__(self, **kwargs):
         super(Part, self).__init__(**kwargs)
@@ -50,15 +51,14 @@ class Part(db.Model, BaseMixin, AuditableMixin):
 
     def __repr__(self):
         return "<Part %s>" % self.name
-    
+
     @property
     def quantity(self):
         """Get the part balance."""
         try:
-            return query(" quantity from part_balances where uuid='" + str(self.uuid)
-            + "'")[0][
-                "quantity"
-            ]
+            return query(
+                " quantity from part_balances where uuid='" + str(self.uuid) + "'"
+            )[0]["quantity"]
         except Exception:
             return 0
 
@@ -69,21 +69,21 @@ class PartLog(db.Model, BaseMixin, AuditableMixin):
     If a purchase is made, debit is vendor id and credit is part id
     if a sale is mafe, debit is part id and credit is entity_id
     """
-    
-    part_id = db.Column(db.String(50), db.ForeignKey('part.uuid'))
-    reference = db.Column(db.String(50)) # job id or vendor id
-    category = db.Column(db.String(50)) # sale or purchase
-    credit = db.Column(db.String(50)) 
+
+    part_id = db.Column(db.String(50), db.ForeignKey("part.uuid"))
+    reference = db.Column(db.String(50))  # job id or vendor id
+    category = db.Column(db.String(50))  # sale or purchase
+    credit = db.Column(db.String(50))
     debit = db.Column(db.String(50))
     quantity = db.Column(db.Integer)
     unit_cost = db.Column(db.String(50))
     amount = db.Column(db.Numeric(20, 2), CheckConstraint("amount > 0.0"))
-    entity_id = db.Column(db.String(50), db.ForeignKey('entity.uuid'))
+    entity_id = db.Column(db.String(50), db.ForeignKey("entity.uuid"))
     accounting_date = db.Column(db.Date, default=db.func.now())
     accounting_period = db.Column(db.String(50), default=db.func.now())
-    
-    entity = db.relationship('Entity')
-    part = db.relationship('Part')
+
+    entity = db.relationship("Entity")
+    part = db.relationship("Part")
 
     def __init__(self, **kwargs):
         super(PartLog, self).__init__(**kwargs)
@@ -91,12 +91,13 @@ class PartLog(db.Model, BaseMixin, AuditableMixin):
 
     def __repr__(self):
         return "<PartLog %s>" % self.part_id
-    
+
     @property
     def debit_account(self):
         sql = (
             """ name FROM part_accounts where part_accounts.uuid ='"""
-            + str(self.debit) + """'
+            + str(self.debit)
+            + """'
             """
         )
 
@@ -108,7 +109,8 @@ class PartLog(db.Model, BaseMixin, AuditableMixin):
 
         sql = (
             """ name FROM part_accounts where part_accounts.uuid ='"""
-             + str(self.credit) + """'"""
+            + str(self.credit)
+            + """'"""
         )
 
         data = query(sql)

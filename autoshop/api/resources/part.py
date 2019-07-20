@@ -6,13 +6,13 @@ from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
 from autoshop.models import Part, Entity, VehicleModel, PartCategory
 from autoshop.api.resources.part_category import PartCategorySchema
-from autoshop.api.resources.vehicle_model import VehicleModelSchema
 from autoshop.api.resources.entity import EntitySchema
 from autoshop.api.resources.vendor import VendorSchema
 
+
 class PartSchema(ma.ModelSchema):
-    
-    entity = ma.Nested(EntitySchema, only=('name','address','email', 'phone'))
+
+    entity = ma.Nested(EntitySchema, only=('name', 'address', 'email', 'phone'))
     category = ma.Nested(PartCategorySchema)
     vendor = ma.Nested(VendorSchema)
 
@@ -38,14 +38,14 @@ class PartResource(Resource):
 
     method_decorators = [jwt_required]
 
-    def get(self, setting_id):
+    def get(self, part_id):
         schema = PartSchema()
-        part = Part.query.get_or_404(setting_id)
+        part = Part.query.get_or_404(part_id)
         return {"part": schema.dump(part).data}
 
-    def put(self, setting_id):
+    def put(self, part_id):
         schema = PartSchema(partial=True)
-        part = Part.query.get_or_404(setting_id)
+        part = Part.query.get_or_404(part_id)
         part, errors = schema.load(request.json, instance=part)
         if errors:
             return errors, 422
@@ -53,8 +53,8 @@ class PartResource(Resource):
         db.session.commit()
         return {"msg": "part updated", "part": schema.dump(part).data}
 
-    def delete(self, setting_id):
-        part = Part.query.get_or_404(setting_id)
+    def delete(self, part_id):
+        part = Part.query.get_or_404(part_id)
         db.session.delete(part)
         db.session.commit()
 
@@ -83,11 +83,13 @@ class PartList(Resource):
             return errors, 422
 
         part.created_by = get_jwt_identity()
-        
+
         if not Entity.get(uuid=part.entity_id):
-            return {"msg": "The supplied entity id does not exist"}, 422        
+            return {"msg": "The supplied entity id does not exist"}, 422
         if Part.get(name=part.name):
             return {"msg": "The supplied name already exists"}, 409
+        if Part.get(code=part.code):
+            return {"msg": "The supplied code already exists"}, 409
         if not VehicleModel.get(uuid=part.model_id):
             return {"msg": "The supplied vehicle model doesnt exist"}, 422
         if not PartCategory.get(uuid=part.category_id):

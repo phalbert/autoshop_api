@@ -24,6 +24,7 @@ class Entry(db.Model):
     credit = db.Column(db.Integer, db.ForeignKey("accounts.id", ondelete="RESTRICT"))
     tran_type = db.Column(db.String(50))
     phone = db.Column(db.String(50))
+    category = db.Column(db.String(50))
     pay_type = db.Column(db.String(50))
     description = db.Column(db.String(4000))
     cheque_number = db.Column(db.String(80))
@@ -52,7 +53,8 @@ class Entry(db.Model):
         sql = (
             """ name FROM accounts INNER JOIN account_holders on
             account_holders.uuid=accounts.owner_id where accounts.id = """
-            + str(self.debit) + """
+            + str(self.debit)
+            + """
             """
         )
 
@@ -68,7 +70,9 @@ class Entry(db.Model):
         sql = (
             """ name FROM accounts INNER JOIN account_holders on
             account_holders.uuid=accounts.owner_id where accounts.id =
-            """ + str(self.credit) + """ """
+            """
+            + str(self.credit)
+            + """ """
         )
 
         data = query(sql)
@@ -131,6 +135,7 @@ class Entry(db.Model):
 
     def transact(self):
         entries = self.get_entries()
+
         for entr in entries:
             db.session.add(entr)
         db.session.commit()
@@ -166,7 +171,7 @@ class Entry(db.Model):
 
 class Transaction(db.Model, BaseMixin, AuditableMixin):
     tranid = db.Column(db.String(50))
-    reference = db.Column(db.String(50)) # customer/vendor id
+    reference = db.Column(db.String(50))  # customer/vendor id
     vendor_id = db.Column(db.String(50))
     phone = db.Column(db.String(50))
     category = db.Column(db.String(50))

@@ -6,18 +6,19 @@ from marshmallow import validate
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
 from autoshop.models import (
-    Entity, ServiceRequest, TransactionType
+    ServiceRequest
 )
 from autoshop.api.resources.vehicle import VehicleSchema
 from autoshop.api.resources.service import ServiceSchema
 from autoshop.api.resources.customer import CustomerSchema
 from autoshop.api.resources.entity import EntitySchema
 
+
 class ServiceRequestSchema(ma.ModelSchema):
     vehicle = ma.Nested(VehicleSchema)
     service = ma.Nested(ServiceSchema)
-    customer = ma.Nested(CustomerSchema, only=('name','address','email', 'phone'))
-    entity = ma.Nested(EntitySchema, only=('name','address','email', 'phone'))
+    customer = ma.Nested(CustomerSchema, only=('name', 'address', 'email', 'phone'))
+    entity = ma.Nested(EntitySchema, only=('name', 'address', 'email', 'phone'))
 
     not_empty = validate.Length(min=1, max=50, error="Field cant be empty.")
     pay_types = validate.OneOf(["cash", "momo"])
@@ -94,7 +95,6 @@ class ServiceRequestList(Resource):
 
         service_request.created_by = identity
 
-
         try:
             db.session.add(service_request)
             db.session.commit()
@@ -102,7 +102,7 @@ class ServiceRequestList(Resource):
                 {"msg": "service_request created", "service_request": schema.dump(service_request).data},
                 201,
             )
-                
+
         except Exception as e:
             db.session.rollback()
             return {"msg": e.args[0], "exception": e.args}, 500

@@ -1,5 +1,3 @@
-from sqlalchemy.orm import column_property
-from sqlalchemy import select, func
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.extensions import db
 
@@ -17,14 +15,13 @@ class AccessLog(db.Model, AuditableMixin):
     status = db.Column(db.String(4000))
     created_by = db.Column(db.Integer)
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
-    
 
     def __init__(self, **kwargs):
         super(AccessLog, self).__init__(**kwargs)
-    
+
     def __repr__(self):
         return "<AccessLog %s>" % self.ip
-    
+
     def save(self):
         """Save an object in the database."""
         try:
@@ -36,5 +33,5 @@ class AccessLog(db.Model, AuditableMixin):
             db.session.rollback()
             return {
                 "message": "Ensure the object you're saving is valid.",
-                "exception": str(e)
+                "exception": str(e),
             }
