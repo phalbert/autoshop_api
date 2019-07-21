@@ -12,7 +12,7 @@ from autoshop.api.resources.local_purchase_order import LocalPurchaseOrderSchema
 from autoshop.api.resources.part import PartSchema
 
 class LpoItemSchema(ma.ModelSchema):
-    part = ma.Nested(PartSchema, only=('name','vendor_price'))
+    part = ma.Nested(PartSchema, only=('name','uuid'))
     order = ma.Nested(LocalPurchaseOrderSchema, only=('id','uuid', 'vendor_id'))
     not_empty = validate.Length(min=1, max=50, error="Field cant be empty.")
     
