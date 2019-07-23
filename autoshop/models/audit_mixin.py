@@ -64,9 +64,9 @@ class MyBase(db.Model):
 class TimestampableMixin:
     """Allow a model to track its creation and update times"""
 
-    created_at = Column(DateTime, default=datetime.datetime.now)
+    created_at = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
     updated_at = Column(
-        DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now
+        DateTime(timezone=True), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
 
 

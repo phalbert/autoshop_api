@@ -1,5 +1,6 @@
 import string
 import uuid
+import datetime
 from random import choice, randint
 
 
@@ -20,12 +21,11 @@ class BaseMixin:
     active = db.Column(db.Boolean, default=True)
     modified_by = db.Column(db.Integer)
     created_by = db.Column(db.Integer)
-    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    date_created = db.Column(db.DateTime(timezone=True), default=datetime.datetime.utcnow)
     date_modified = db.Column(
-        db.DateTime,
-        default=db.func.current_timestamp(),
-        onupdate=db.func.current_timestamp(),
-    )
+        db.DateTime(timezone=True), default=datetime.datetime.utcnow,
+        onupdate=datetime.datetime.utcnow)
+
 
     # @declared_attr
     # def user_id(cls):
