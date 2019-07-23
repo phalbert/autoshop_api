@@ -12,7 +12,7 @@ from autoshop.api.resources.part import PartSchema
 
 
 class PartLogSchema(ma.ModelSchema):
-    part = ma.Nested(PartSchema, only=('name', 'vendor_price'))
+    part = ma.Nested(PartSchema, only=('name', 'uuid'))
 
     entity = ma.Nested(EntitySchema, only=('name', 'address', 'email', 'phone'))
 
