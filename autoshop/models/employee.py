@@ -1,3 +1,5 @@
+import datetime
+from flask import current_app
 from autoshop.extensions import db
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
@@ -66,7 +68,7 @@ class Job(db.Model, BaseMixin, AuditableMixin):
     )
     entity_id = db.Column(db.String(50), db.ForeignKey("entity.uuid"), nullable=False)
     is_complete = db.Column(db.Boolean, default=False)
-    completed_date = db.Column(db.DateTime)
+    completed_date = db.Column(db.DateTime(timezone=True), default=datetime.datetime.utcnow)
     completed_by = db.Column(db.Integer, db.ForeignKey("users.id"))
 
     employee = db.relationship("Employee")
@@ -117,29 +119,30 @@ class Job(db.Model, BaseMixin, AuditableMixin):
 
 
         part = Part.get(code='labour')
-        log = PartLog(
-            part_id=part.uuid,
-            debit=part.uuid,
-            credit=part.entity_id,
-            reference=random_tran_id(),
-            category='sale',
-            quantity=time,
-            unit_cost=part.price,
-            amount=time * int(part.price),          
-            entity_id=part.entity_id
-        )
+        if part:
+            log = PartLog(
+                part_id=part.uuid,
+                debit=part.uuid,
+                credit=part.entity_id,
+                reference=random_tran_id(),
+                category='sale',
+                quantity=time,
+                unit_cost=part.price,
+                amount=time * int(part.price),          
+                entity_id=part.entity_id
+            )
 
-        item = JobItem(
-            job_id=self.uuid,
-            item=part.uuid,
-            quantity=time,
-            unit_cost=part.price,
-            entity_id=part.entity_id
-        )
+            item = JobItem(
+                job_id=self.uuid,
+                item=part.uuid,
+                quantity=time,
+                unit_cost=part.price,
+                entity_id=part.entity_id
+            )
 
-        db.session.add(item)
-        db.session.add(log)
-        db.session.commit()
+            db.session.add(item)
+            db.session.add(log)
+            db.session.commit()
 
 class JobItem(db.Model, BaseMixin, AuditableMixin):
     job_id = db.Column(db.String(50), db.ForeignKey("job.uuid"))

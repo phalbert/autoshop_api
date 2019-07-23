@@ -3,6 +3,7 @@
 from flask import request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource
+from datetime import datetime, timezone
 
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
@@ -56,10 +57,8 @@ class JobResource(Resource):
 
         job.modified_by = identity
         if job.is_complete:
-            from datetime import datetime
-            job.completed_date = datetime.now()
+            job.completed_date = datetime.now(timezone.utc)
             job.complete()
-
 
         try:
             db.session.commit()

@@ -85,7 +85,7 @@ class PartLogList(Resource):
             query = PartLog.query.filter_by(reference=request.args.get("reference"))
         else:
             query = PartLog.query
-        query = query.order_by(PartLog.date_created.desc(), PartLog.amount.desc())
+        query = query.order_by(PartLog.date_created.desc())
         return paginate(query, schema)
 
     def post(self):

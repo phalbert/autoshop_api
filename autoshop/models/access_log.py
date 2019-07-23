@@ -1,3 +1,4 @@
+import datetime
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.extensions import db
 
@@ -14,7 +15,7 @@ class AccessLog(db.Model, AuditableMixin):
     url = db.Column(db.String(50))
     status = db.Column(db.String(4000))
     created_by = db.Column(db.Integer)
-    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    date_created = db.Column(db.DateTime(timezone=True), default=datetime.datetime.utcnow)
 
     def __init__(self, **kwargs):
         super(AccessLog, self).__init__(**kwargs)
