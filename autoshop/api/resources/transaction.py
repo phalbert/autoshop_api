@@ -1,4 +1,5 @@
-from flask import request
+from datetime import datetime
+from flask import request, current_app as app
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource
 
@@ -85,7 +86,16 @@ class TransactionList(Resource):
 
     def get(self):
         schema = TransactionSchema(many=True)
-        if request.args.get("uuid") is not None:
+
+        if request.args.get("type"):
+            from_date = request.args.get('from')
+            to_date = request.args.get('to')
+            tran_type = request.args.get('type')
+            query = Transaction.query.filter_by(tran_type=tran_type)
+
+            query = query.filter(Transaction.date_created.between(from_date,to_date))
+
+        elif request.args.get("uuid") is not None:
             uuid = request.args.get("uuid")
             query = Transaction.query.filter_by(uuid=uuid)
         elif request.args.get("company") is not None:
@@ -93,6 +103,7 @@ class TransactionList(Resource):
             query = Transaction.query.filter_by(entity_id=company)
         else:
             query = Transaction.query
+
         return paginate(query.order_by(Transaction.date_created.desc()), schema)
 
     def post(self):
