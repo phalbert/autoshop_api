@@ -70,13 +70,17 @@ class PartLogList(Resource):
     def get(self):
         schema = PartLogSchema(many=True)
         
-        if request.args.get("from"):
+        if request.args.get("type"):
             from_date = request.args.get('from')
             to_date = request.args.get('to')
             tran_type = request.args.get('type')
+            part = request.args.get('part_id')
             query = PartLog.query.filter_by(category=tran_type)
+            if part:
+                query = PartLog.query.filter_by(category=tran_type, part_id=part)
+            if from_date and to_date:
+                query = query.filter(PartLog.date_created.between(from_date,to_date))
 
-            query = query.filter(PartLog.date_created.between(from_date,to_date))
 
         elif request.args.get("uuid") and request.args.get("tran_type"):
             query = PartLog.query.filter_by(
