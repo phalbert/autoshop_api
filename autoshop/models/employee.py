@@ -134,7 +134,7 @@ class Job(db.Model, BaseMixin, AuditableMixin):
 
             job_item = JobItem(
                 job_id=self.uuid,
-                item=item.uuid,
+                item_id=item.uuid,
                 quantity=time,
                 unit_cost=item.price,
                 entity_id=item.entity_id
