@@ -69,13 +69,13 @@ def seed():
     db.session.commit()
 
 
-@cli.command('parts')
-def part_views():
-    """part_views create
+@cli.command('items')
+def items():
+    """item_views create
     """
 
     fileDir = os.path.dirname(os.path.realpath('__file__'))
-    filename = os.path.join(fileDir, 'autoshop/sql/parts.sql')
+    filename = os.path.join(fileDir, 'autoshop/sql/items.sql')
     file = open(filename)
     execute_sql(file)
 
@@ -146,7 +146,7 @@ def init():
     execute_sql(file2)
 
     fileDir = os.path.dirname(os.path.realpath('__file__'))
-    filename = os.path.join(fileDir, 'autoshop/sql/parts.sql')
+    filename = os.path.join(fileDir, 'autoshop/sql/items.sql')
     file = open(filename)
     execute_sql(file)
 

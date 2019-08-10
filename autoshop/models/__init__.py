@@ -9,7 +9,7 @@ from .user import Role, User
 from .vehicle import Vehicle, VehicleModel, VehicleType, Make
 from .access_log import AccessLog
 from .service import Service, ServiceRequest, WorkItem
-from .part import Part, PartLog, PartCategory
+from .item import Item, ItemLog, ItemCategory
 from .employee import Employee, EmployeeType, Job, JobItem
 from .local_purchase_order import LocalPurchaseOrder, LpoItem
 
@@ -21,9 +21,9 @@ __all__ = [
     "EmployeeType",
     "Job",
     "JobItem",
-    "Part",
-    "PartLog",
-    "PartCategory",
+    "Item",
+    "ItemLog",
+    "ItemCategory",
     "User",
     "Role",
     "AccessLog",

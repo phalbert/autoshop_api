@@ -7,17 +7,17 @@ from sqlalchemy import and_
 
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
-from autoshop.models import LpoItem, LocalPurchaseOrder, Part
+from autoshop.models import LpoItem, LocalPurchaseOrder, Item
 from autoshop.api.resources.local_purchase_order import LocalPurchaseOrderSchema
-from autoshop.api.resources.part import PartSchema
+from autoshop.api.resources.item import ItemSchema
 
 class LpoItemSchema(ma.ModelSchema):
-    part = ma.Nested(PartSchema, only=('name','uuid'))
+    item = ma.Nested(ItemSchema, only=('name','uuid'))
     order = ma.Nested(LocalPurchaseOrderSchema, only=('id','uuid', 'vendor_id'))
     not_empty = validate.Length(min=1, max=50, error="Field cant be empty.")
     
     order_id = ma.String(required=True)
-    part_id = ma.String(required=True, validate=[not_empty])
+    item_id = ma.String(required=True, validate=[not_empty])
     quantity = ma.Integer(required=True)
 
     class Meta:
@@ -94,7 +94,7 @@ class LpoItemList(Resource):
         try:
             if not LocalPurchaseOrder.get(uuid=lpo_item.order_id):
                 return {"msg": "The supplied lpo code doesnt exist"}, 422
-            if LpoItem.get(order_id=lpo_item.order_id, part_id=lpo_item.part_id):
+            if LpoItem.get(order_id=lpo_item.order_id, item_id=lpo_item.item_id):
                 return {"msg": "The supplied lpo_item already exists"}, 409
             else:
 

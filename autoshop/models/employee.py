@@ -104,7 +104,7 @@ class Job(db.Model, BaseMixin, AuditableMixin):
             return None
 
     def complete(self):
-        from autoshop.models.part import Part,  PartLog
+        from autoshop.models.item import Item,  ItemLog
         from autoshop.commons.util import random_tran_id
 
         job = Job.get(uuid=self.uuid)
@@ -118,41 +118,41 @@ class Job(db.Model, BaseMixin, AuditableMixin):
             time = 1
 
 
-        part = Part.get(code='labour')
-        if part:
-            log = PartLog(
-                part_id=part.uuid,
-                debit=part.uuid,
-                credit=part.entity_id,
+        item = Item.get(code='labour')
+        if item:
+            log = ItemLog(
+                item_id=item.uuid,
+                debit=item.uuid,
+                credit=item.entity_id,
                 reference=random_tran_id(),
                 category='sale',
                 quantity=time,
-                unit_cost=part.price,
-                amount=time * int(part.price),          
-                entity_id=part.entity_id
+                unit_cost=item.price,
+                amount=time * int(item.price),          
+                entity_id=item.entity_id
             )
 
-            item = JobItem(
+            job_item = JobItem(
                 job_id=self.uuid,
-                item=part.uuid,
+                item=item.uuid,
                 quantity=time,
-                unit_cost=part.price,
-                entity_id=part.entity_id
+                unit_cost=item.price,
+                entity_id=item.entity_id
             )
 
-            db.session.add(item)
+            db.session.add(job_item)
             db.session.add(log)
             db.session.commit()
 
 class JobItem(db.Model, BaseMixin, AuditableMixin):
     job_id = db.Column(db.String(50), db.ForeignKey("job.uuid"))
-    item = db.Column(db.String(50), db.ForeignKey("part.uuid"))
+    item_id = db.Column(db.String(50), db.ForeignKey("item.uuid"))
     quantity = db.Column(db.String(50))
     unit_cost = db.Column(db.String(50))
     units = db.Column(db.String(50))
     entity_id = db.Column(db.String(50), db.ForeignKey("entity.uuid"))
 
-    part = db.relationship("Part")
+    item = db.relationship("Item")
     job = db.relationship("Job")
     entity = db.relationship("Entity")
 

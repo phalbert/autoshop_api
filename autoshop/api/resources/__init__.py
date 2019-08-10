@@ -24,14 +24,14 @@ from .access_log import AccessLogResource, AccessLogList
 from .service import ServiceResource, ServiceList
 from .service_request import ServiceRequestResource, ServiceRequestList
 from .work_item import WorkItemResource, WorkItemList
-from .part import PartResource, PartList
-from .part_category import PartCategoryResource, PartCategoryList
+from .item import ItemResource, ItemList
+from .item_category import ItemCategoryResource, ItemCategoryList
 from .employee_type import EmployeeTypeResource, EmployeeTypeList
 from .employee import EmployeeResource, EmployeeList
 from .job import JobResource, JobList
 from .job_item import JobItemResource, JobItemList
 from .make import MakeResource, MakeList
-from .part_log import PartLogResource, PartLogList
+from .item_log import ItemLogResource, ItemLogList
 from .local_purchase_order import LocalPurchaseOrderResource, LocalPurchaseOrderList
 from .lpo_item import LpoItemResource, LpoItemList
 
@@ -40,8 +40,8 @@ __all__ = [
     "LocalPurchaseOrderList",
     "LpoItemResource",
     "LpoItemList",
-    "PartLogResource",
-    "PartLogList",
+    "ItemLogResource",
+    "ItemLogList",
     "MakeResource",
     "MakeList",
     "JobItemResource",
@@ -52,10 +52,10 @@ __all__ = [
     "EmployeeList",
     "EmployeeTypeResource",
     "EmployeeTypeList",
-    "PartCategoryResource",
-    "PartCategoryList",
-    "PartResource",
-    "PartList",
+    "ItemCategoryResource",
+    "ItemCategoryList",
+    "ItemResource",
+    "ItemList",
     "ServiceResource",
     "ServiceList",
     "ServiceRequestResource",

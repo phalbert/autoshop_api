@@ -7,13 +7,13 @@ from marshmallow import validate
 
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
-from autoshop.models import JobItem, Job, PartLog
+from autoshop.models import JobItem, Job, ItemLog
 from autoshop.api.resources.job import JobSchema
-from autoshop.api.resources.part import PartSchema
+from autoshop.api.resources.item import ItemSchema
 
 
 class JobItemSchema(ma.ModelSchema):
-    part = ma.Nested(PartSchema, only=('id', 'name', 'price'))
+    item = ma.Nested(ItemSchema, only=('id', 'name', 'price'))
     job = ma.Nested(JobSchema, only=('id', 'employee_id', 'request_id',
                                      'is_complete'))
                                      
@@ -21,7 +21,7 @@ class JobItemSchema(ma.ModelSchema):
                                 error='Field cant be empty.')
 
     job_id = ma.String(required=True)
-    item = ma.String(required=True, validate=[not_empty])
+    item_id = ma.String(required=True, validate=[not_empty])
     quantity = ma.Integer(required=True)
     unit_cost = ma.Integer(required=True)
     entity_id = ma.String(required=True)
@@ -110,9 +110,9 @@ class JobItemList(Resource):
                 return ({'msg': 'The supplied job_item already exists'
                          }, 409)
             else:
-                part_log = PartLog(
-                    part_id=job_item.item,
-                    debit=job_item.item,
+                item_log = ItemLog(
+                    item_id=job_item.item_id,
+                    debit=job_item.item_id,
                     credit=job_item.entity_id,
                     reference=job_item.job_id,
                     category='sale',
@@ -123,7 +123,7 @@ class JobItemList(Resource):
                 )
 
                 db.session.add(job_item)
-                db.session.add(part_log)
+                db.session.add(item_log)
                 db.session.commit()
                 return ({'msg': 'job_item created',
                          'job_item': schema.dump(job_item).data}, 201)

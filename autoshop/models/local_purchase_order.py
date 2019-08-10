@@ -25,11 +25,11 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin):
 
 class LpoItem(db.Model, BaseMixin, AuditableMixin):
     order_id = db.Column(db.String(50), db.ForeignKey('local_purchase_order.uuid'))
-    part_id = db.Column(db.String(80), db.ForeignKey("part.uuid"), nullable=False)
+    item_id = db.Column(db.String(80), db.ForeignKey("item.uuid"), nullable=False)
     quantity = db.Column(db.String(50))  
     entity_id = db.Column(db.String(50), db.ForeignKey('entity.uuid'))
     
-    part = db.relationship('Part')
+    item = db.relationship('Item')
     order = db.relationship('LocalPurchaseOrder')
     entity = db.relationship('Entity')
 
