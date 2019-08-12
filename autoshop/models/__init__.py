@@ -12,8 +12,10 @@ from .service import Service, ServiceRequest, WorkItem
 from .item import Item, ItemLog, ItemCategory
 from .employee import Employee, EmployeeType, Job, JobItem
 from .local_purchase_order import LocalPurchaseOrder, LpoItem
+from .expense import Expense
 
 __all__ = [
+    "Expense",
     "LpoItem",
     "LocalPurchaseOrder",
     "Make",

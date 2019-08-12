@@ -34,8 +34,11 @@ from .make import MakeResource, MakeList
 from .item_log import ItemLogResource, ItemLogList
 from .local_purchase_order import LocalPurchaseOrderResource, LocalPurchaseOrderList
 from .lpo_item import LpoItemResource, LpoItemList
+from .expense import ExpenseResource, ExpenseList
 
 __all__ = [
+    "ExpenseResource", 
+    "ExpenseList",
     "LocalPurchaseOrderResource",
     "LocalPurchaseOrderList",
     "LpoItemResource",
