@@ -16,4 +16,17 @@ CREATE OR REPLACE FUNCTION get_expenses(date DATE) RETURNS NUMERIC AS $$
     WHERE TO_CHAR(date_created :: DATE, 'yyyy-mm-dd')=cast(date as VARCHAR)
 $$ LANGUAGE SQL;
 
+CREATE FUNCTION get_total_sales(start_date date, end_date date) RETURNS NUMERIC AS $$
+    SELECT sum(amount) FROM item_log
+    WHERE category='sale'
+    and date_created>=start_date
+    and date_created<=end_date;
+$$ LANGUAGE SQL;
+
+CREATE FUNCTION get_total_expenses(start_date date, end_date date) RETURNS NUMERIC AS $$
+    SELECT sum(cast(amount as NUMERIC)) FROM expense
+    WHERE date_created>=start_date
+    and date_created<=end_date;
+$$ LANGUAGE SQL;
+
 
