@@ -9,8 +9,6 @@ CREATE OR REPLACE FUNCTION get_sales(date DATE) RETURNS NUMERIC AS $$
     WHERE TO_CHAR(date_created :: DATE, 'yyyy-mm-dd')=cast(date as VARCHAR)
 $$ LANGUAGE SQL;
 
-
-
 CREATE OR REPLACE FUNCTION get_expenses(date DATE) RETURNS NUMERIC AS $$
     SELECT sum(cast(amount as NUMERIC)) FROM expense
     WHERE TO_CHAR(date_created :: DATE, 'yyyy-mm-dd')=cast(date as VARCHAR)
