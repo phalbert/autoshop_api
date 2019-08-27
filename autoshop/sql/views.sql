@@ -32,3 +32,9 @@ CREATE OR REPLACE FUNCTION get_item_trans(item VARCHAR, category_id VARCHAR, dat
     WHERE TO_CHAR(date_created :: DATE, 'yyyy-mm-dd')=cast(date as VARCHAR)
     and item_log.item_id=item and item_log.category=category_id
 $$ LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION get_item_total(item VARCHAR, category_id VARCHAR, date DATE) RETURNS NUMERIC AS $$
+    SELECT sum(cast(quantity as NUMERIC)) FROM item_log
+    WHERE TO_CHAR(date_created :: DATE, 'yyyy-mm-dd')=cast(date as VARCHAR)
+    and item_log.item_id=item and item_log.category=category_id
+$$ LANGUAGE SQL;
