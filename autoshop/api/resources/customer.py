@@ -21,7 +21,7 @@ class CustomerSchema(ma.ModelSchema):
     phone = ma.String(
         validate=[
             validate.Regexp(
-                r"^256[3,4,7][0,1,5,7,8,9][0-9]{7}$",
+                r"^(256|0)[3,4,7][0,1,5,7,8,9][0-9]{7}$",
                 error="Invalid phone number supplied",
             )
         ],
