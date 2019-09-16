@@ -69,10 +69,15 @@ class PaymentType(db.Model, BaseMixin, AuditableMixin):
 
     def __repr__(self):
         return "<PaymentType %s>" % self.name
+    
+    @property
+    def account(self):
+        setting = Setting.get(uuid=self.uuid)
+        return Account.get(uuid=setting.value).id
 
     def save(self):
         account = Account(
-            acc_type="suspense",
+            acc_type="commission",
             owner_id=self.uuid,
             created_by=get_jwt_identity(),
             group="system",

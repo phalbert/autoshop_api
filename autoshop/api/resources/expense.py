@@ -4,7 +4,7 @@ from flask_restful import Resource
 
 from autoshop.commons.pagination import paginate
 from autoshop.extensions import db, ma
-from autoshop.models import Expense
+from autoshop.models import Expense, Entry
 
 
 class ExpenseSchema(ma.ModelSchema):
@@ -65,7 +65,7 @@ class ExpenseList(Resource):
         else:
             query = Expense.query
 
-        return paginate(query, schema)
+        return paginate(query.order_by(Expense.date_created.desc()), schema)
 
     def post(self):
         schema = ExpenseSchema()
@@ -77,8 +77,16 @@ class ExpenseList(Resource):
 
         if Expense.get(reference=expense.reference):
             return {"msg": "The supplied reference already exists"}, 409
-
-        db.session.add(expense)
-        db.session.commit()
-
-        return {"msg": "expense created", "expense": schema.dump(expense).data}, 201
+        
+        try:
+            entry = Entry.init_expense(expense)
+            expense.save()
+            entry.transact()
+            
+            return {"msg": "expense created", "expense": schema.dump(expense).data}, 201
+        except Exception as e:
+            expense.status = 'FAILED'
+            expense.reason = str(e.args[0])
+            expense.update()
+            print(e)
+            return {"msg": e.args[0]}, e.args[1] if len(e.args) > 1 else 500

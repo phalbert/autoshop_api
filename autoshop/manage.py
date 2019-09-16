@@ -9,7 +9,7 @@ from autoshop.app import create_app
 from autoshop.extensions import db
 from autoshop.commons.dbaccess import execute_sql
 from autoshop.models import User, Role, PaymentType, TransactionType, \
-    CustomerType, Entity, Account
+    CustomerType, Entity, Account, CommissionAccount
 
 
 def create_autoshop(info):

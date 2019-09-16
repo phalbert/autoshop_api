@@ -4,7 +4,6 @@ from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
 from autoshop.models.user import User
 
-
 class AccountType(db.Model, BaseMixin, AuditableMixin):
     """AccountType model
     Types are entity, vendor, customer, suspense, commission
@@ -114,3 +113,43 @@ class Account(db.Model, BaseMixin, AuditableMixin):
         if wallets is None:
             return 0
         return len(wallets)
+
+class CommissionAccount(db.Model, BaseMixin, AuditableMixin):
+    """Any other account created"""
+    name = db.Column(db.String(50), unique=True)
+    code = db.Column(db.String(50))
+    entity_id = db.Column(db.String(50))
+
+    def __init__(self, **kwargs):
+        super(CommissionAccount, self).__init__(**kwargs)
+        self.get_uuid()
+
+    def __repr__(self):
+        return "<CommissionAccount %s>" % self.name
+
+    def is_valid(self):
+        if CommissionAccount.get(code=self.code, entity_id=self.entity_id):
+            return False, {"msg": "The commission account already exists"}, 409
+        if CommissionAccount.get(name=self.name):
+            return False, {"msg": "The commission account name already exists"}, 409
+        return True, "OK", 200
+
+    def save(self):
+        valid, msg, status = self.is_valid()
+        if valid:
+            account = Account(
+                acc_type="commission",
+                owner_id=self.uuid,
+                created_by=self.created_by,
+                group=self.entity_id
+            )
+        
+            db.session.add(self)
+            db.session.add(account)
+            db.session.commit()
+        else:
+            raise Exception(msg, status)
+
+    @property
+    def account(self):
+        return Account.get(owner_id=self.uuid)

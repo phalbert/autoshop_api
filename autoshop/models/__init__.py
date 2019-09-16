@@ -1,4 +1,4 @@
-from .account import Account, AccountType
+from .account import Account, AccountType, CommissionAccount
 from .blacklist import TokenBlacklist
 from .charge import Charge, ChargeSplit, Tarriff
 from .customer import Customer
@@ -15,6 +15,7 @@ from .local_purchase_order import LocalPurchaseOrder, LpoItem
 from .expense import Expense
 
 __all__ = [
+    "CommissionAccount",
     "Expense",
     "LpoItem",
     "LocalPurchaseOrder",

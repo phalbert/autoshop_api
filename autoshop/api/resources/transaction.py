@@ -143,13 +143,13 @@ class TransactionList(Resource):
             )
 
             if transaction.tran_type == 'payment':
-                entry.debit = Account.get(owner_id=transaction.pay_type).id
+                entry.debit = Account.get(owner_id=transaction.entity_id).id
                 entry.credit = cust_acct.id
             elif transaction.tran_type == 'bill':
-                entry.debit = cust_acct.id
-                entry.credit = Account.get(owner_id=transaction.entity_id).id
+                entry.debit = cust_acct.id        
+                entry.credit = Account.get(owner_id=transaction.pay_type).id
             else:
-                raise "Failed to determine transaction accounts"
+                raise Exception("Failed to determine transaction accounts")
 
             entry.transact()
         else:

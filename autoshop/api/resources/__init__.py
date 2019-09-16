@@ -35,8 +35,11 @@ from .item_log import ItemLogResource, ItemLogList
 from .local_purchase_order import LocalPurchaseOrderResource, LocalPurchaseOrderList
 from .lpo_item import LpoItemResource, LpoItemList
 from .expense import ExpenseResource, ExpenseList
+from .commission_account import CommissionAccountList, CommissionAccountResource
 
 __all__ = [
+    "CommissionAccountList",
+    "CommissionAccountResource",
     "ExpenseResource", 
     "ExpenseList",
     "LocalPurchaseOrderResource",

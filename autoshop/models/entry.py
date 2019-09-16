@@ -4,10 +4,11 @@ from sqlalchemy import CheckConstraint
 
 from autoshop.commons.dbaccess import query
 from autoshop.extensions import db
-from autoshop.models import Account, Entity
+from autoshop.models import Account, Entity, CommissionAccount
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
 from autoshop.models.charge import ChargeSplit, Tarriff, get_charge_fee
+from autoshop.models.setting import TransactionType
 
 
 class Entry(db.Model):
@@ -102,6 +103,54 @@ class Entry(db.Model):
         """Get a specific object from the database."""
         return cls.query.filter_by(**kwargs).first()
 
+    def is_valid(self):
+        """validate the object"""
+        
+        if not TransactionType.get(uuid=self.tran_type):
+            return False, {"msg": "The transaction type supplied doesn't exist"}, 422
+        if not Account.get(id=self.credit) and not Account.get(id=self.debit):
+            return False, {"msg": "The supplied account id does not exist"}, 422
+        if Entry.get(reference=self.reference):
+            return False, {"msg": "The supplied reference already exists"}, 409
+        if Entry.get(reference=self.cheque_number):
+            return False, {"msg": "This transaction is already reversed"}, 409
+        if self.tran_type == "reversal" and not Entry.get(
+                reference=self.cheque_number
+            ):
+            return False, {"msg": "You can only reverse an existing transaction"}, 422
+
+        if self.tran_type == "reversal":
+            orig = Entry.get(tranid=self.cheque_number)
+            self.debit = orig.credit
+            self.credit = orig.debit
+            self.amount = orig.amount
+            self.entity_id = orig.entity_id
+        return True, self, 200
+
+    @staticmethod
+    def init_expense(expense):
+        entry = Entry(
+            reference=expense.uuid,
+            amount=expense.amount,
+            phone='',
+            entity_id=expense.entity_id,
+            description=expense.narration,
+            tran_type='expense',
+            category=expense.item,
+            pay_type=expense.pay_type,
+        )
+                        
+        entry.debit = Account.get(owner_id=expense.pay_type).id
+        entry.credit = CommissionAccount.get(code='expenses').account.id
+
+        valid, reason, status = entry.is_valid()
+        if valid:
+            return entry
+        else:
+            raise Exception(reason, status)
+
+        return entry
+
     def get_entries(self):
         entries = [self]
         charge = Tarriff.get(
@@ -134,11 +183,17 @@ class Entry(db.Model):
         return entries
 
     def transact(self):
+        """
+
+        :rtype: object
+        """
         entries = self.get_entries()
 
         for entr in entries:
             db.session.add(entr)
+            print('entr')
         db.session.commit()
+        print('transact')
 
         if self.phone:
             self.sms(self.phone)

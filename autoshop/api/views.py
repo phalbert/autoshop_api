@@ -33,12 +33,15 @@ from autoshop.api.resources import (
     JobResource, JobList, JobItemResource, JobItemList,
     MakeResource, MakeList, ItemLogResource, ItemLogList,
     LocalPurchaseOrderList, LocalPurchaseOrderResource,
-    LpoItemList, LpoItemResource, ExpenseResource, ExpenseList
+    LpoItemList, LpoItemResource, ExpenseResource, ExpenseList,
+    CommissionAccountList, CommissionAccountResource
 )
 
 blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
 api = Api(blueprint)
 
+api.add_resource(CommissionAccountResource, "/commission_accounts/<int:comm_account_id>")
+api.add_resource(CommissionAccountList, "/commission_accounts")
 api.add_resource(ExpenseResource, "/expenses/<int:expense_id>")
 api.add_resource(ExpenseList, "/expenses")
 api.add_resource(LpoItemResource, "/lpo_items/<int:lpo_item_id>")
