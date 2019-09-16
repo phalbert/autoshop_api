@@ -8,6 +8,9 @@ from autoshop.models import Expense, Entry
 
 
 class ExpenseSchema(ma.ModelSchema):
+
+    pay_type = ma.String(required=True)
+
     class Meta:
         model = Expense
         sqla_session = db.session

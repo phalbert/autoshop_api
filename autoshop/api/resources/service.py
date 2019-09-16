@@ -14,7 +14,6 @@ class ServiceSchema(ma.ModelSchema):
     name = ma.String(required=True, validate=[not_empty])
     description = ma.String(required=True)
     entity_id = ma.String(required=True, validate=[not_empty])
-
     class Meta:
         model = Service
         sqla_session = db.session
