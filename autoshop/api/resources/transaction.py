@@ -8,7 +8,7 @@ from autoshop.extensions import db, ma
 from autoshop.models import (
     Account, Customer, Entry,
     PaymentType, Transaction, User,
-    TransactionType
+    TransactionType, CommissionAccount
 )
 
 
@@ -129,7 +129,6 @@ class TransactionList(Resource):
             transaction.status = "SUCCESS"
             cust_acct = Account.get(owner_id=transaction.reference)
             transaction.entity_id = cust_acct.group
-            transaction.save()
 
             entry = Entry(
                 reference=transaction.uuid,
@@ -141,13 +140,14 @@ class TransactionList(Resource):
                 category=transaction.category,
                 pay_type=transaction.pay_type,
             )
+            transaction.save()
 
             if transaction.tran_type == 'payment':
-                entry.debit = Account.get(owner_id=transaction.entity_id).id
+                entry.debit = CommissionAccount.get(code='escrow').account.id
                 entry.credit = cust_acct.id
             elif transaction.tran_type == 'bill':
                 entry.debit = cust_acct.id        
-                entry.credit = Account.get(owner_id=transaction.pay_type).id
+                entry.credit = Account.get(owner_id=transaction.entity_id).id
             else:
                 raise Exception("Failed to determine transaction accounts")
 

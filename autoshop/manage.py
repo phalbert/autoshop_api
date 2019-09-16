@@ -160,7 +160,7 @@ def init():
     role4 = Role(uuid='vendor_user', name='Vendor User',
                  category='vendor', active=True, created_by=1)
 
-    pay_type = PaymentType(uuid='momo', name='Mobile Money',
+    pay_type = PaymentType(uuid='bank', name='Bank',
                            active=True, created_by=1)
     pay_type2 = PaymentType(uuid='cash', name='Cash', active=True,
                             created_by=1)

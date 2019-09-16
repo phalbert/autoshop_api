@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from flask import current_app as app
 from sqlalchemy import CheckConstraint
 
 from autoshop.commons.dbaccess import query
@@ -153,6 +154,7 @@ class Entry(db.Model):
 
     def get_entries(self):
         entries = [self]
+
         charge = Tarriff.get(
             tran_type=self.tran_type, payment_type=self.pay_type, entity_id="ALL"
         )
@@ -180,24 +182,40 @@ class Entry(db.Model):
                 )
                 entries.append(e)
 
+        if self.tran_type == 'payment':
+            payment_entry = Entry(
+                reference=self.reference,
+                amount=self.amount,
+                description=self.description,
+                tran_type=self.tran_type,
+                phone=self.phone,
+                pay_type=self.pay_type,
+                entity_id=self.entity_id
+            )
+            payment_entry.debit = Account.get(owner_id=self.entity_id).id
+            payment_entry.credit = Account.get(owner_id=self.pay_type).id
+            entries.append(payment_entry)
+
         return entries
 
     def transact(self):
         """
-
         :rtype: object
+        If a customer is invoiced, value is debited off their account onto
+        the entity account, when they make a payment
+        1. Value is debited off the `escrow` onto the customer account
+        2. Value is also moved off the entity account onto the pay type account
+
+        In the future, the payment type account ought to be created per entity
         """
         entries = self.get_entries()
 
         for entr in entries:
             db.session.add(entr)
-            print('entr')
+
         db.session.commit()
-        print('transact')
 
-        if self.phone:
-            self.sms(self.phone)
-
+        
     def sms(self, phone):
         try:
             from autoshop.commons.messaging import send_sms_async
