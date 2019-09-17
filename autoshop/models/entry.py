@@ -108,7 +108,7 @@ class Entry(db.Model):
         """validate the object"""
         
         if not TransactionType.get(uuid=self.tran_type):
-            return False, {"msg": "The transaction type supplied doesn't exist"}, 422
+            return False, {"msg": "The transaction type {0} doesn't exist".format(self.tran_type)}, 422
         if not Account.get(id=self.credit) and not Account.get(id=self.debit):
             return False, {"msg": "The supplied account id does not exist"}, 422
         if Entry.get(reference=self.reference):
@@ -141,16 +141,18 @@ class Entry(db.Model):
             pay_type=expense.pay_type,
         )
                         
-        entry.debit = Account.get(owner_id=expense.pay_type).id
-        entry.credit = CommissionAccount.get(code='expenses').account.id
+        if expense.pay_type == 'credit':
+            entry.debit = CommissionAccount.get(code='credit').account.id
+            entry.credit = CommissionAccount.get(code='expenses').account.id
+        else:
+            entry.debit = Account.get(owner_id=expense.pay_type).id
+            entry.credit = CommissionAccount.get(code='expenses').account.id
 
         valid, reason, status = entry.is_valid()
         if valid:
             return entry
         else:
             raise Exception(reason, status)
-
-        return entry
 
     def get_entries(self):
         entries = [self]
