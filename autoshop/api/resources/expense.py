@@ -37,6 +37,9 @@ class ExpenseResource(Resource):
             return errors, 422
         expense.modified_by = get_jwt_identity()
         db.session.commit()
+        if expense.on_credit and expense.pay_type != 'credit' and expense.credit_status == 'PAID':
+            Entry.init_expense(expense).transact()
+
         return {"msg": "expense updated", "expense": schema.dump(expense).data}
 
     def delete(self, expense_id):

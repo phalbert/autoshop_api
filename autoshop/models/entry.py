@@ -144,6 +144,9 @@ class Entry(db.Model):
         if expense.pay_type == 'credit':
             entry.debit = CommissionAccount.get(code='credit').account.id
             entry.credit = CommissionAccount.get(code='expenses').account.id
+        elif expense.on_credit and expense.pay_type != 'credit' and expense.credit_status == 'PAID':
+            entry.debit = Account.get(owner_id=expense.pay_type).id
+            entry.credit = CommissionAccount.get(code='credit').account.id
         else:
             entry.debit = Account.get(owner_id=expense.pay_type).id
             entry.credit = CommissionAccount.get(code='expenses').account.id
