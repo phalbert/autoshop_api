@@ -124,46 +124,33 @@ class TransactionList(Resource):
         if not PaymentType.get(uuid=transaction.pay_type):
             return {"msg": "Unknown payment type supplied"}, 422
 
-        if transaction.is_synchronous:
-            transaction.processed = True
-            transaction.status = "SUCCESS"
-            cust_acct = Account.get(owner_id=transaction.reference)
-            transaction.entity_id = cust_acct.group
+        try:
+            if transaction.is_synchronous:
+                transaction.processed = True
+                transaction.status = "SUCCESS"
+                cust_acct = Account.get(owner_id=transaction.reference)
+                transaction.entity_id = cust_acct.group
 
-            entry = Entry(
-                reference=transaction.uuid,
-                amount=transaction.amount,
-                phone=transaction.phone,
-                entity_id=transaction.entity_id,
-                description=transaction.narration,
-                tran_type=transaction.tran_type,
-                category=transaction.category,
-                pay_type=transaction.pay_type,
-            )
-            transaction.save()
-
-            if transaction.tran_type == 'payment':
-                entry.debit = CommissionAccount.get(code='escrow').account.id
-                entry.credit = cust_acct.id
-            elif transaction.tran_type == 'bill':
-                entry.debit = cust_acct.id        
-                entry.credit = Account.get(owner_id=transaction.entity_id).id
+                entry = Entry.init_transaction(transaction)
+                transaction.save()
+                entry.transact()
             else:
-                raise Exception("Failed to determine transaction accounts")
+                # just save transaction, and update later in background service
+                transaction.save()
 
-            entry.transact()
-        else:
-            # just save transaction, and update later in background service
-            transaction.save()
-
-        result_schema = TransactionViewSchema()
-        return (
-            {
-                "msg": "transaction created",
-                "transaction": result_schema.dump(transaction).data,
-            },
-            201,
-        )
+            result_schema = TransactionViewSchema()
+            return (
+                {
+                    "msg": "transaction created",
+                    "transaction": result_schema.dump(transaction).data,
+                },
+                201,
+            )
+        except Exception as e:
+            transaction.status = 'FAILED'
+            transaction.reason = str(e.args[0])
+            transaction.update()
+            return {"msg": e.args[0]}, e.args[1] if len(e.args) > 1 else 500
 
 
 def str2bool(v):

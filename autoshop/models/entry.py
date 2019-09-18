@@ -197,6 +197,35 @@ class Entry(db.Model):
         else:
             raise Exception(reason, status)
 
+    def init_transaction(transaction):
+        entry = Entry(
+            reference=transaction.uuid,
+            amount=transaction.amount,
+            phone=transaction.phone,
+            entity_id=transaction.entity_id,
+            description=transaction.narration,
+            tran_type=transaction.tran_type,
+            category=transaction.category,
+            pay_type=transaction.pay_type,
+        )
+        
+        cust_acct = Account.get(owner_id=transaction.reference)
+
+        if transaction.tran_type == 'payment':
+            entry.debit = CommissionAccount.get(code='escrow').account.id
+            entry.credit = cust_acct.id
+        elif transaction.tran_type == 'bill':
+            entry.debit = cust_acct.id        
+            entry.credit = Account.get(owner_id=transaction.entity_id).id
+        else:
+            raise Exception("Failed to determine transaction accounts")
+
+        valid, reason, status = entry.is_valid()
+        if valid:
+            return entry
+        else:
+            raise Exception(reason, status)
+
     def get_entries(self):
         entries = [self]
 
