@@ -41,6 +41,9 @@ class LocalPurchaseOrderResource(Resource):
         if errors:
             return errors, 422
 
+        if lpo.status == 'COMPLETED':
+            lpo.log_items()
+
         return {"msg": "lpo updated", "lpo": schema.dump(lpo).data}
 
     def delete(self, lpo_id):
@@ -73,6 +76,8 @@ class LocalPurchaseOrderList(Resource):
                 query = LocalPurchaseOrder.query.filter_by(entity_id=request.args.get("uuid"))
         elif request.args.get("reference"):
             query = LocalPurchaseOrder.query.filter_by(reference=request.args.get("reference"))
+        elif request.args.get("code"):
+            query = LocalPurchaseOrder.query.filter_by(uuid=request.args.get("code"))
         else:
             query = LocalPurchaseOrder.query
         query = query.order_by(LocalPurchaseOrder.date_created.desc())

@@ -4,6 +4,7 @@ from autoshop.models.account import Account
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
 from autoshop.models.entity import Entity
+from autoshop.models.item import ItemLog
 
 
 class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin):
@@ -12,7 +13,8 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin):
 
     entity_id = db.Column(db.String(50), db.ForeignKey("entity.uuid"), nullable=False)
     vendor_id = db.Column(db.String(50), db.ForeignKey("vendor.uuid"), nullable=False)
-    
+    status = db.Column(db.String(50), default='PENDING') 
+
     entity = db.relationship('Entity')
     vendor = db.relationship('Vendor')
 
@@ -23,10 +25,33 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin):
     def __repr__(self):
         return "<LocalPurchaseOrder %s>" % self.uuid
 
+    def log_items(self):
+        logs = []
+        items = LpoItem.query.filter_by(order_id=self.uuid).all()
+        for item in items:
+            log = ItemLog(
+                item_id=item.item_id,
+                debit=self.vendor_id,
+                credit=item.item_id,
+                reference=self.uuid,
+                category='purchase',
+                quantity=item.quantity,
+                unit_cost=item.unit_price,
+                amount=int(item.unit_price) * int(item.quantity),            
+                entity_id=item.entity_id
+            )
+            logs.append(log)
+        db.session.add_all(logs)
+        db.session.commit()
+
+
+
+
 class LpoItem(db.Model, BaseMixin, AuditableMixin):
     order_id = db.Column(db.String(50), db.ForeignKey('local_purchase_order.uuid'))
     item_id = db.Column(db.String(80), db.ForeignKey("item.uuid"), nullable=False)
-    quantity = db.Column(db.String(50))  
+    quantity = db.Column(db.String(50)) 
+    unit_price = db.Column(db.String(50)) 
     entity_id = db.Column(db.String(50), db.ForeignKey('entity.uuid'))
     
     item = db.relationship('Item')
@@ -39,3 +64,7 @@ class LpoItem(db.Model, BaseMixin, AuditableMixin):
 
     def __repr__(self):
         return "<LpoItem %s>" % self.uuid
+
+    @property
+    def amount(self):
+        return float(self.quantity) * float(self.unit_price)

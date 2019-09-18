@@ -19,12 +19,13 @@ class LpoItemSchema(ma.ModelSchema):
     order_id = ma.String(required=True)
     item_id = ma.String(required=True, validate=[not_empty])
     quantity = ma.Integer(required=True)
+    unit_price = ma.Integer(required=True)
 
     class Meta:
         model = LpoItem
         sqla_session = db.session
 
-        additional = ("creator", )
+        additional = ("creator", "amount")
 
 
 class LpoItemResource(Resource):
@@ -33,16 +34,16 @@ class LpoItemResource(Resource):
 
     method_decorators = [jwt_required]
 
-    def get(self, job_item_id):
+    def get(self, lpo_item_id):
         schema = LpoItemSchema()
-        lpo_item = LpoItem.query.get_or_404(job_item_id)
+        lpo_item = LpoItem.query.get_or_404(lpo_item_id)
         return {"lpo_item": schema.dump(lpo_item).data}
 
-    def put(self, job_item_id):
+    def put(self, lpo_item_id):
         identity = get_jwt_identity()
 
         schema = LpoItemSchema(partial=True)
-        lpo_item = LpoItem.query.get_or_404(job_item_id)
+        lpo_item = LpoItem.query.get_or_404(lpo_item_id)
         lpo_item, errors = schema.load(request.json, instance=lpo_item)
         if errors:
             return errors, 422
@@ -56,8 +57,8 @@ class LpoItemResource(Resource):
             db.session.rollback()
             return {"msg": "post error", "exception": e.args}, 500
 
-    def delete(self, job_item_id):
-        lpo_item = LpoItem.query.get_or_404(job_item_id)
+    def delete(self, lpo_item_id):
+        lpo_item = LpoItem.query.get_or_404(lpo_item_id)
         db.session.delete(lpo_item)
         db.session.commit()
 
