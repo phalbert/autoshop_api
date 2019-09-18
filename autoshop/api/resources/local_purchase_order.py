@@ -20,7 +20,7 @@ class LocalPurchaseOrderSchema(ma.ModelSchema):
         model = LocalPurchaseOrder
         sqla_session = db.session
 
-        additional = ("creator",)
+        additional = ("creator", "items")
 
 
 class LocalPurchaseOrderResource(Resource):

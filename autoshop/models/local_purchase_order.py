@@ -24,6 +24,11 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin):
 
     def __repr__(self):
         return "<LocalPurchaseOrder %s>" % self.uuid
+    
+    @property
+    def items(self):
+        return LpoItem.query.filter_by(order_id=self.uuid).count()
+
 
     def log_items(self):
         logs = []
