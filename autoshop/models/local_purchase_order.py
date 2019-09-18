@@ -5,6 +5,7 @@ from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
 from autoshop.models.entity import Entity
 from autoshop.models.item import ItemLog
+from autoshop.models.entry import Entry
 
 
 class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin):
@@ -32,6 +33,7 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin):
 
     def log_items(self):
         logs = []
+        entries = []
         items = LpoItem.query.filter_by(order_id=self.uuid).all()
         for item in items:
             log = ItemLog(
@@ -43,11 +45,17 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin):
                 quantity=item.quantity,
                 unit_cost=item.unit_price,
                 amount=int(item.unit_price) * int(item.quantity),            
-                entity_id=item.entity_id
+                entity_id=item.entity_id,
+                pay_type='cash'
             )
             logs.append(log)
+            entry = Entry.init_item_log(log)
+            entries.append(entry)
+
         db.session.add_all(logs)
+        db.session.add_all(entries)
         db.session.commit()
+
 
 
 

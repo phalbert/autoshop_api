@@ -158,6 +158,36 @@ class Entry(db.Model):
         else:
             raise Exception(reason, status)
 
+    @staticmethod
+    def init_item_log(item_log):
+        entry = Entry(
+            reference=item_log.uuid,
+            amount=item_log.amount,
+            phone='',
+            entity_id=item_log.entity_id,
+            description=item_log.item_id,
+            tran_type=item_log.category,
+            category=item_log.item_id,
+            pay_type=item_log.pay_type,
+        )
+                        
+        if item_log.pay_type == 'credit':
+            entry.debit = CommissionAccount.get(code='credit').account.id
+            entry.credit = Account.get(owner_id=item_log.debit).id
+            entry.reference = entry.reference + '-credit'
+        elif item_log.on_credit and item_log.pay_type != 'credit' and item_log.credit_status == 'PAID':
+            entry.debit = Account.get(owner_id=item_log.pay_type).id
+            entry.credit = CommissionAccount.get(code='credit').account.id
+        else:
+            entry.debit = Account.get(owner_id=item_log.pay_type).id
+            entry.credit = Account.get(owner_id=item_log.debit).id
+
+        valid, reason, status = entry.is_valid()
+        if valid:
+            return entry
+        else:
+            raise Exception(reason, status)
+
     def get_entries(self):
         entries = [self]
 

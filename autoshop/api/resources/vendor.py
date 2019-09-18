@@ -76,7 +76,7 @@ class VendorList(Resource):
 
             account = Account(
                 owner_id=vendor.uuid, acc_type="vendor", created_by=get_jwt_identity(),
-                minimum_balance=0.0,
+                minimum_balance=0.0,group=vendor.uuid
             )
 
             db.session.add(vendor)
