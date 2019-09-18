@@ -119,6 +119,16 @@ class Entry(db.Model):
                 reference=self.cheque_number
             ):
             return False, {"msg": "You can only reverse an existing transaction"}, 422
+        
+        # check balance
+        account = Account.get(id=self.debit)
+        bal_after = int(account.balance) + int(self.amount)
+        min_bal = float(account.minimum_balance)
+        
+        app.logger.info(bal_after)
+        app.logger.info(min_bal)
+        if account.minimum_balance is not None and float(bal_after) < float(account.minimum_balance):
+            return False, {"msg": "Insufficient balance on account {0}".format(account.balance)}, 409
 
         if self.tran_type == "reversal":
             orig = Entry.get(tranid=self.cheque_number)
@@ -126,6 +136,8 @@ class Entry(db.Model):
             self.credit = orig.debit
             self.amount = orig.amount
             self.entity_id = orig.entity_id
+
+        
         return True, self, 200
 
     @staticmethod

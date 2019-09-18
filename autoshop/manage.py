@@ -173,6 +173,10 @@ def init():
                                  active=True, created_by=1)
     tran_type4 = TransactionType(uuid='adjustment', name='Adjustment',
                                  active=True, created_by=1)
+    tran_type5 = TransactionType(uuid='expense', name='Expense',
+                                 active=True, created_by=1)
+    tran_type6 = TransactionType(uuid='purchase', name='Purchase',
+                                 active=True, created_by=1)
 
     user = User(
         username=app.config['APP_KEY'],
@@ -191,6 +195,8 @@ def init():
     db.session.add(tran_type2)
     db.session.add(tran_type3)
     db.session.add(tran_type4)
+    db.session.add(tran_type5)
+    db.session.add(tran_type6)
     db.session.add(role)
     db.session.add(role2)
     db.session.add(role3)

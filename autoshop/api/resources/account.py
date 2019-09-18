@@ -23,22 +23,22 @@ class AccountResource(Resource):
 
     method_decorators = [jwt_required]
 
-    def get(self, user_id):
+    def get(self, account_id):
         schema = AccountSchema()
-        account = Account.query.get_or_404(user_id)
+        account = Account.query.get_or_404(account_id)
         return {"account": schema.dump(account).data}
 
-    def put(self, user_id):
+    def put(self, account_id):
         schema = AccountSchema(partial=True)
-        account = Account.query.get_or_404(user_id)
+        account = Account.query.get_or_404(account_id)
         account, errors = schema.load(request.json, instance=account)
         if errors:
             return errors, 422
-
+        db.session.commit()
         return {"msg": "account updated", "account": schema.dump(account).data}
 
-    def delete(self, user_id):
-        account = Account.query.get_or_404(user_id)
+    def delete(self, account_id):
+        account = Account.query.get_or_404(account_id)
         db.session.delete(account)
         db.session.commit()
 

@@ -40,11 +40,12 @@ class LocalPurchaseOrderResource(Resource):
         lpo, errors = schema.load(request.json, instance=lpo)
         if errors:
             return errors, 422
-
-        if lpo.status == 'COMPLETED':
-            lpo.log_items()
-
-        return {"msg": "lpo updated", "lpo": schema.dump(lpo).data}
+        try:
+            if lpo.status == 'COMPLETED':
+                lpo.log_items()
+            return {"msg": "lpo updated", "lpo": schema.dump(lpo).data}
+        except Exception as e:
+            return {"msg": e.args[0]}, e.args[1] if len(e.args) > 1 else 500
 
     def delete(self, lpo_id):
         lpo = LocalPurchaseOrder.query.get_or_404(lpo_id)
