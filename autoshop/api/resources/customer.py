@@ -116,6 +116,7 @@ class CustomerList(Resource):
                     acc_type="customer",
                     created_by=get_jwt_identity(),
                     group=customer.entity_id,
+                    minimum_balance=0.0
                 )
                 db.session.add(account)
                 db.session.commit()

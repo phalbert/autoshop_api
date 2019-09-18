@@ -122,6 +122,7 @@ class EntityList(Resource):
                     acc_type="entity",
                     created_by=get_jwt_identity(),
                     group=entity.uuid,
+                    minimum_balance=0.0,
                 )
 
                 if Entity.get(name=name):

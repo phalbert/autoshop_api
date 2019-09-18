@@ -35,6 +35,8 @@ class Account(db.Model, BaseMixin, AuditableMixin):
     owner_id = db.Column(db.String(50), unique=True)
     acc_type = db.Column(db.String(50))
     group = db.Column(db.String(50))
+    minimum_balance = db.Column(db.Numeric(20, 2))
+
 
     def __init__(self, **kwargs):
         super(Account, self).__init__(**kwargs)
@@ -134,14 +136,15 @@ class CommissionAccount(db.Model, BaseMixin, AuditableMixin):
             return False, {"msg": "The commission account name already exists"}, 409
         return True, "OK", 200
 
-    def save(self):
+    def save(self, minimum_balance):
         valid, msg, status = self.is_valid()
         if valid:
             account = Account(
                 acc_type="commission",
                 owner_id=self.uuid,
                 created_by=self.created_by,
-                group=self.entity_id
+                group=self.entity_id,
+                minimum_balance=minimum_balance,
             )
         
             db.session.add(self)

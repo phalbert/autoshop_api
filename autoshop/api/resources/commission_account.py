@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, current_app as app
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -80,12 +80,18 @@ class CommissionAccountList(Resource):
 
         comm_account.created_by = get_jwt_identity()
 
+        min_bal = request.json.get('minimum_balance')
+        # remove commas
+        min_bal = min_bal.replace(',','')
 
+        
+        if CommissionAccount.get(code=comm_account.code):
+            return {"msg": "Duplicate account code supplied"}
         if not Entity.get(uuid=comm_account.entity_id) and not Vendor.get(uuid=comm_account.entity_id):
             return {"msg": "The supplied entity id doesnt exist"}, 422
 
         try:
-            comm_account.save()
+            comm_account.save(min_bal)
 
             return {"msg": "comm_account created", "comm_account": schema.dump(comm_account).data}, 201
         except Exception as e:

@@ -9,6 +9,7 @@ from autoshop.models import Account, Customer, Entity, Vendor
 
 
 class AccountSchema(ma.ModelSchema):
+    minimum_balance = ma.Integer(required=True)
     class Meta:
         model = Account
         sqla_session = db.session

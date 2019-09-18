@@ -81,6 +81,7 @@ class PaymentType(db.Model, BaseMixin, AuditableMixin):
             owner_id=self.uuid,
             created_by=get_jwt_identity(),
             group="system",
+            minimum_balance=0.0
         )
 
         setting = Setting(

@@ -75,7 +75,8 @@ class VendorList(Resource):
                 return {"msg": "The supplied email already exists"}, 409
 
             account = Account(
-                owner_id=vendor.uuid, acc_type="vendor", created_by=get_jwt_identity()
+                owner_id=vendor.uuid, acc_type="vendor", created_by=get_jwt_identity(),
+                minimum_balance=0.0,
             )
 
             db.session.add(vendor)
