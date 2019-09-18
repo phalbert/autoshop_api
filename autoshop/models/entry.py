@@ -122,7 +122,7 @@ class Entry(db.Model):
         
         # check balance
         account = Account.get(id=self.debit)
-        bal_after = int(account.balance) + int(self.amount)
+        bal_after = int(account.balance) - int(self.amount)
 
         if account.minimum_balance is not None and float(bal_after) < float(account.minimum_balance):
             return False, {"msg": "Insufficient balance on account {0}".format(account.balance)}, 409
@@ -197,6 +197,7 @@ class Entry(db.Model):
         else:
             raise Exception(reason, status)
 
+    @staticmethod
     def init_transaction(transaction):
         entry = Entry(
             reference=transaction.uuid,
