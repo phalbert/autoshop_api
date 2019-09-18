@@ -123,10 +123,7 @@ class Entry(db.Model):
         # check balance
         account = Account.get(id=self.debit)
         bal_after = int(account.balance) + int(self.amount)
-        min_bal = float(account.minimum_balance)
-        
-        app.logger.info(bal_after)
-        app.logger.info(min_bal)
+
         if account.minimum_balance is not None and float(bal_after) < float(account.minimum_balance):
             return False, {"msg": "Insufficient balance on account {0}".format(account.balance)}, 409
 
