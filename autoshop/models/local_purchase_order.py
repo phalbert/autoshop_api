@@ -6,7 +6,7 @@ from autoshop.models.base_mixin import BaseMixin
 from autoshop.models.entity import Entity
 from autoshop.models.item import ItemLog
 from autoshop.models.entry import Entry
-
+from autoshop.commons.util import commas
 
 class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin):
     """Basic LPO model
@@ -14,6 +14,8 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin):
 
     entity_id = db.Column(db.String(50), db.ForeignKey("entity.uuid"), nullable=False)
     vendor_id = db.Column(db.String(50), db.ForeignKey("vendor.uuid"), nullable=False)
+    narration = db.Column(db.String(50))
+    pay_type = db.Column(db.String(50))
     status = db.Column(db.String(50), default='PENDING') 
 
     entity = db.relationship('Entity')
@@ -35,6 +37,14 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin):
         logs = []
         entries = []
         items = LpoItem.query.filter_by(order_id=self.uuid).all()
+
+        if not items:
+            raise Exception("No items found in LPO. Please add some items")
+        
+        balance = Account.get(owner_id=self.pay_type).balance
+
+        total = 0
+
         for item in items:
             log = ItemLog(
                 item_id=item.item_id,
@@ -46,11 +56,19 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin):
                 unit_cost=item.unit_price,
                 amount=int(item.unit_price) * int(item.quantity),            
                 entity_id=item.entity_id,
-                pay_type='cash'
+                pay_type=self.pay_type
             )
             logs.append(log)
             entry = Entry.init_item_log(log)
             entries.append(entry)
+
+            total += int(log.amount)
+            bal_after = int(balance) - total
+
+            if bal_after < balance:
+                raise Exception("""You do not sufficient funds on the {0} account to
+            clear the LPO. Balance: {1}""".format(self.pay_type, commas(balance)) )
+        
 
         db.session.add_all(logs)
         db.session.add_all(entries)

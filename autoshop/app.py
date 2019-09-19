@@ -16,8 +16,8 @@ def create_app(testing=False, cli=False):
     configure_extensions(app, cli)
     register_blueprints(app)
     register_requestloggers(app)
-    return app
 
+    return app
 
 def configure_extensions(app, cli):
     """configure flask extensions
@@ -27,6 +27,7 @@ def configure_extensions(app, cli):
 
     if cli is True:
         migrate.init_app(app, db)
+
 
 
 def register_blueprints(app):

@@ -4,6 +4,7 @@ from flask import current_app as app
 from sqlalchemy import CheckConstraint
 
 from autoshop.commons.dbaccess import query
+from autoshop.commons.util import commas
 from autoshop.extensions import db
 from autoshop.models import Account, Entity, CommissionAccount
 from autoshop.models.audit_mixin import AuditableMixin
@@ -125,7 +126,7 @@ class Entry(db.Model):
         bal_after = int(account.balance) - int(self.amount)
 
         if account.minimum_balance is not None and float(bal_after) < float(account.minimum_balance):
-            return False, {"msg": "Insufficient balance on account {0}".format(account.balance)}, 409
+            return False, {"msg": "Insufficient balance on {0} account {1}".format(account.name,commas(account.balance))}, 409
 
         if self.tran_type == "reversal":
             orig = Entry.get(tranid=self.cheque_number)

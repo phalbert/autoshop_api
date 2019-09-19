@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import request
+from flask import request, current_app as app
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource
 
@@ -45,6 +45,7 @@ class LocalPurchaseOrderResource(Resource):
                 lpo.log_items()
             return {"msg": "lpo updated", "lpo": schema.dump(lpo).data}
         except Exception as e:
+
             return {"msg": e.args[0]}, e.args[1] if len(e.args) > 1 else 500
 
     def delete(self, lpo_id):
