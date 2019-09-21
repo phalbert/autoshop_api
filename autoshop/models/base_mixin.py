@@ -2,7 +2,7 @@ import string
 import uuid
 import datetime
 from random import choice, randint
-
+from flask_jwt_extended import get_jwt_identity
 
 from autoshop.commons.dbaccess import query
 from autoshop.extensions import db
@@ -26,7 +26,8 @@ class BaseMixin:
         db.DateTime(timezone=True), default=datetime.datetime.utcnow,
         onupdate=datetime.datetime.utcnow)
 
-
+    def __init__(self, **kwargs):
+        self.created_by = get_jwt_identity()   
     # @declared_attr
     # def user_id(cls):
     #     return db.Column(
