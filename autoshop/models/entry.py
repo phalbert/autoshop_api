@@ -198,6 +198,37 @@ class Entry(db.Model):
             return entry
         else:
             raise Exception(reason, status)
+    
+    @staticmethod
+    def init_expenditure(expenditure):
+        entry = Entry(
+            reference=expenditure.uuid,
+            amount=expenditure.amount,
+            phone=expenditure.phone,
+            entity_id=expenditure.entity_id,
+            description=expenditure.narration,
+            tran_type=expenditure.category,
+            cheque_number=expenditure.reference,
+            category=expenditure.vendor_id,
+            pay_type=expenditure.pay_type,
+        )
+                        
+        if expenditure.pay_type == 'credit':
+            entry.debit = CommissionAccount.get(code='credit').account.id
+            entry.credit = CommissionAccount.get(code=expenditure.category).account.id
+            entry.reference = entry.reference + '-credit'
+        elif expenditure.on_credit and expenditure.pay_type != 'credit' and expenditure.credit_status in ('PAID','PARTIAL'):
+            entry.debit = Account.get(owner_id=expenditure.pay_type).id
+            entry.credit = CommissionAccount.get(code='credit').account.id
+        else:
+            entry.debit = Account.get(owner_id=expenditure.pay_type).id
+            entry.credit = CommissionAccount.get(code=expenditure.category).account.id
+
+        valid, reason, status = entry.is_valid()
+        if valid:
+            return entry
+        else:
+            raise Exception(reason, status)
 
     @staticmethod
     def init_transaction(transaction):

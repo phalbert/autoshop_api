@@ -8,6 +8,7 @@ from autoshop.models.entity import Entity
 from autoshop.models.item import ItemLog
 from autoshop.models.entry import Entry
 from autoshop.commons.util import commas
+from autoshop.models.expenditure import Expenditure
 
 class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin, CreditMixin):
     """Basic LPO model
@@ -15,6 +16,7 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin, CreditMixin):
 
     entity_id = db.Column(db.String(50), db.ForeignKey("entity.uuid"), nullable=False)
     vendor_id = db.Column(db.String(50), db.ForeignKey("vendor.uuid"), nullable=False)
+    amount = db.Column(db.String(50))
     narration = db.Column(db.String(50))
     status = db.Column(db.String(50), default='PENDING') 
 
@@ -32,7 +34,7 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin, CreditMixin):
     def items(self):
         return LpoItem.query.filter_by(order_id=self.uuid).count()
 
-
+    
     def log_items(self):
         logs = []
         # entries = []
@@ -40,8 +42,6 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin, CreditMixin):
 
         if not items:
             raise Exception("No items found in LPO. Please add some items")
-        
-        balance = Account.get(owner_id=self.pay_type).balance
 
         total = 0
 
@@ -59,29 +59,20 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin, CreditMixin):
                 pay_type=self.pay_type
             )
             logs.append(log)
-            # entry = Entry.init_item_log(log)
-            # entries.append(entry)
-
             total += int(log.amount)
-            bal_after = int(balance) - total
 
-            # if bal_after < balance:
-            #     raise Exception("""You do not sufficient funds on the {0} account to
-            # clear the LPO. Balance: {1}""".format(self.pay_type, commas(balance)) )
-        
-        
+        self.amount = total
 
-        db.session.add_all(logs)
-        # db.session.add_all(entries)
-        db.session.commit()
-        return total
+        if not Expenditure.get(uuid=self.uuid):
+            db.session.add_all(logs)
+            db.session.commit()
+
+            Expenditure.init_lpo(self)
 
     def clear_credit(self, amount_to_pay):
         """Check if expenses on credit are cleared"""
         if not self.on_credit:
-            raise Exception('This is not a credit expense')
-        
-        total = self.log_items()
+            return
 
         paid = self.credit['paid']
         actual_bal = self.credit['balance']
@@ -94,12 +85,10 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin, CreditMixin):
         if balance < 0.0:
             raise Exception('Amount to pay should not be greater than the balance {2}'.format(commas(actual_bal)))
         else:
-            entry = Entry.init_expense(self)
+            entry = Entry.init_expenditure(self)
             entry.amount = amount_to_pay
             entry.reference = self.uuid + str(count)
-            entry.transact()
-
-
+            entry.transact() 
 
 
 

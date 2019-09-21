@@ -43,6 +43,9 @@ class LocalPurchaseOrderResource(Resource):
         try:
             if lpo.status == 'COMPLETED':
                 lpo.log_items()
+                
+            amount_to_pay = request.json.get('amount_to_pay')
+            lpo.clear_credit(amount_to_pay)
             return {"msg": "lpo updated", "lpo": schema.dump(lpo).data}
         except Exception as e:
 
@@ -91,12 +94,8 @@ class LocalPurchaseOrderList(Resource):
         if errors:
             return errors, 422
 
-        lpo.created_by = get_jwt_identity()
-        lpo.accounting_period = datetime.now().strftime("%Y-%m")
-
         try:
-            db.session.add(lpo)
-            db.session.commit()
+            lpo.save()
             return {"msg": "lpo created", "lpo": schema.dump(lpo).data}, 201
         except Exception as e:
             db.session.rollback()
