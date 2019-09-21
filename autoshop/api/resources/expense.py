@@ -15,7 +15,7 @@ class ExpenseSchema(ma.ModelSchema):
         model = Expense
         sqla_session = db.session
 
-        additional = ("creator",)
+        additional = ("creator", "credit")
 
 
 class ExpenseResource(Resource):
@@ -37,10 +37,18 @@ class ExpenseResource(Resource):
             return errors, 422
         expense.modified_by = get_jwt_identity()
         db.session.commit()
-        if expense.on_credit and expense.pay_type != 'credit' and expense.credit_status == 'PAID':
-            Entry.init_expense(expense).transact()
 
-        return {"msg": "expense updated", "expense": schema.dump(expense).data}
+        try:
+            if expense.on_credit and expense.pay_type != 'credit' and expense.credit_status == 'PAID':
+                amount_to_pay = request.json.get('amount_to_pay')
+                expense.clear_credit(amount_to_pay)
+
+            return {"msg": "expense updated", "expense": schema.dump(expense).data}
+        except Exception as e:
+            expense.credit_status = 'PARTIAL'
+            expense.update()
+            return {"msg": e.args[0]}, e.args[1] if len(e.args) > 1 else 500
+
 
     def delete(self, expense_id):
         expense = Expense.query.get_or_404(expense_id)

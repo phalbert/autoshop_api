@@ -147,6 +147,7 @@ class Entry(db.Model):
             entity_id=expense.entity_id,
             description=expense.narration,
             tran_type='expense',
+            cheque_number=expense.reference,
             category=expense.item,
             pay_type=expense.pay_type,
         )
@@ -155,7 +156,7 @@ class Entry(db.Model):
             entry.debit = CommissionAccount.get(code='credit').account.id
             entry.credit = CommissionAccount.get(code='expenses').account.id
             entry.reference = entry.reference + '-credit'
-        elif expense.on_credit and expense.pay_type != 'credit' and expense.credit_status == 'PAID':
+        elif expense.on_credit and expense.pay_type != 'credit' and expense.credit_status in ('PAID','PARTIAL'):
             entry.debit = Account.get(owner_id=expense.pay_type).id
             entry.credit = CommissionAccount.get(code='credit').account.id
         else:
