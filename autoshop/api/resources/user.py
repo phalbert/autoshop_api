@@ -1,6 +1,7 @@
-from flask import request
+from flask import request, current_app as app
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from loguru import logger
 
 from autoshop.models import User
 from autoshop.extensions import ma, db
@@ -51,7 +52,7 @@ class UserList(Resource):
     """Creation and get_all
     """
 
-    method_decorators = [jwt_required]
+    method_decorators = [jwt_required, logger.catch]
 
     def get(self):
         schema = UserSchema(many=True)
