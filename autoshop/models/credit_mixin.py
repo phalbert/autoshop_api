@@ -17,15 +17,26 @@ class CreditMixin:
         entries = Entry.query.filter_by(cheque_number=self.uuid).all()
         count = 0
         paid = 0
+        payments = []
         for entry in entries:
             if 'credit' not in entry.reference:
                 paid += entry.amount
                 count += 1
 
+                if self.on_credit:
+                    payments.append({
+                        "id": entry.id,
+                        "tran_type": entry.tran_type,
+                        "pay_type": entry.pay_type,
+                        "date": str(entry.accounting_date),
+                        "amount": str(entry.amount)
+                    })
+
         return {
             "paid": float(paid),
             "balance": float(self.amount) - float(paid),
-            "payments": count
+            "payments": count,
+            "entries": payments
         }
 
     # def clear_credit(self, amount_to_pay):
