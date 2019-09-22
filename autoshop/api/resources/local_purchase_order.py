@@ -20,7 +20,7 @@ class LocalPurchaseOrderSchema(ma.ModelSchema):
         model = LocalPurchaseOrder
         sqla_session = db.session
 
-        additional = ("creator", "items")
+        additional = ("creator", "items", "credit")
 
 
 class LocalPurchaseOrderResource(Resource):
@@ -41,14 +41,15 @@ class LocalPurchaseOrderResource(Resource):
         if errors:
             return errors, 422
         try:
-            if lpo.status == 'COMPLETED':
+            if request.json.get('status') == 'COMPLETED':
                 lpo.log_items()
                 
             amount_to_pay = request.json.get('amount_to_pay')
             lpo.clear_credit(amount_to_pay)
             return {"msg": "lpo updated", "lpo": schema.dump(lpo).data}
         except Exception as e:
-
+            lpo.credit_status = 'PARTIAL'
+            lpo.update()
             return {"msg": e.args[0]}, e.args[1] if len(e.args) > 1 else 500
 
     def delete(self, lpo_id):

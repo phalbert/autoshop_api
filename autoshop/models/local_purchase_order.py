@@ -1,4 +1,4 @@
-
+from flask import current_app as app
 from autoshop.extensions import db
 from autoshop.models.account import Account
 from autoshop.models.audit_mixin import AuditableMixin
@@ -16,7 +16,7 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin, CreditMixin):
 
     entity_id = db.Column(db.String(50), db.ForeignKey("entity.uuid"), nullable=False)
     vendor_id = db.Column(db.String(50), db.ForeignKey("vendor.uuid"), nullable=False)
-    amount = db.Column(db.String(50))
+    amount = db.Column(db.String(50), default='0')
     narration = db.Column(db.String(50))
     status = db.Column(db.String(50), default='PENDING') 
 
@@ -25,11 +25,15 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin, CreditMixin):
 
     def __init__(self, **kwargs):
         super(LocalPurchaseOrder, self).__init__(**kwargs)
+        if self.pay_type == 'credit':
+            self.on_credit = True
+            self.credit_status = 'PENDING'
         self.get_uuid()
 
     def __repr__(self):
         return "<LocalPurchaseOrder %s>" % self.uuid
-    
+
+
     @property
     def items(self):
         return LpoItem.query.filter_by(order_id=self.uuid).count()
@@ -81,12 +85,15 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin, CreditMixin):
         balance = float(self.amount) - (float(paid) + float(amount_to_pay))
         
         self.credit_status = 'PAID' if int(balance) == 0 else 'PARTIAL'
+        
 
         if balance < 0.0:
             raise Exception('Amount to pay should not be greater than the balance {2}'.format(commas(actual_bal)))
         else:
-            entry = Entry.init_expenditure(self)
-            entry.amount = amount_to_pay
+            exp = Expenditure.get(reference=self.uuid)
+            exp.amount = amount_to_pay
+            exp.pay_type = self.pay_type
+            entry = Entry.init_expenditure(exp)
             entry.reference = self.uuid + str(count)
             entry.transact() 
 

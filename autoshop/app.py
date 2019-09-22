@@ -1,4 +1,7 @@
+import sys
 from flask import Flask
+from loguru import logger
+from logging import StreamHandler
 
 from autoshop import auth, api
 from autoshop.extensions import db, jwt, migrate
@@ -12,6 +15,9 @@ def create_app(testing=False, cli=False):
 
     if testing is True:
         app.config['TESTING'] = True
+
+    logger.add(StreamHandler(sys.stdout), format="{level} {message}")
+    app.logger = logger
 
     configure_extensions(app, cli)
     register_blueprints(app)

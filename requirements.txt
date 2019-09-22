@@ -16,5 +16,4 @@ gunicorn
 environs
 requests
 rfc3339
-
-
+loguru

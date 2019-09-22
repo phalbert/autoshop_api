@@ -124,6 +124,7 @@ class Entry(db.Model):
         # check balance
         account = Account.get(id=self.debit)
         bal_after = int(account.balance) - int(self.amount)
+        app.logger.info(self.amount)
 
         if account.minimum_balance is not None and float(bal_after) < float(account.minimum_balance):
             return False, {"msg": "Insufficient balance on {0} account {1}".format(account.name,commas(account.balance))}, 409
@@ -224,11 +225,7 @@ class Entry(db.Model):
             entry.debit = Account.get(owner_id=expenditure.pay_type).id
             entry.credit = CommissionAccount.get(code=expenditure.category).account.id
 
-        valid, reason, status = entry.is_valid()
-        if valid:
-            return entry
-        else:
-            raise Exception(reason, status)
+        return entry
 
     @staticmethod
     def init_transaction(transaction):
@@ -316,6 +313,10 @@ class Entry(db.Model):
 
         In the future, the payment type account ought to be created per entity
         """
+        valid, reason, status = self.is_valid()
+        if not valid:
+            raise Exception(reason.get('msg'), status)
+
         entries = self.get_entries()
 
         for entr in entries:
