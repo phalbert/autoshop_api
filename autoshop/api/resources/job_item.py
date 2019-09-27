@@ -110,21 +110,7 @@ class JobItemList(Resource):
                 return ({'msg': 'The supplied job_item already exists'
                          }, 409)
             else:
-                item_log = ItemLog(
-                    item_id=job_item.item_id,
-                    debit=job_item.item_id,
-                    credit=job_item.entity_id,
-                    reference=job_item.job_id,
-                    category='sale',
-                    quantity=job_item.quantity,
-                    amount=job_item.cost,
-                    unit_cost=job_item.unit_cost,
-                    entity_id=job_item.entity_id,
-                )
-
-                db.session.add(job_item)
-                db.session.add(item_log)
-                db.session.commit()
+                job_item.save()
                 return ({'msg': 'job_item created',
                          'job_item': schema.dump(job_item).data}, 201)
         except Exception as e:

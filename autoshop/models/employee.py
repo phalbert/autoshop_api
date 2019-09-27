@@ -4,7 +4,7 @@ from autoshop.extensions import db
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
 from autoshop.models.entity import Entity
-
+from autoshop.models.item import ItemLog
 
 class EmployeeType(db.Model, BaseMixin, AuditableMixin):
     """"
@@ -170,3 +170,7 @@ class JobItem(db.Model, BaseMixin, AuditableMixin):
         except Exception:
             return None
 
+    def save(self):
+        item_log = ItemLog.init_jobitem(self)
+        db.session.add(self)
+        item_log.transact()

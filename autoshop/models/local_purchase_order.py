@@ -48,6 +48,7 @@ class LocalPurchaseOrder(db.Model, BaseMixin, AuditableMixin, CreditMixin):
             raise Exception("No items found in LPO. Please add some items")
 
         total = 0
+        self.status = 'COMPLETED'
 
         for item in items:
             log = ItemLog(

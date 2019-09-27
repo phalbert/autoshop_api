@@ -43,12 +43,14 @@ class LocalPurchaseOrderResource(Resource):
         try:
             if request.json.get('status') == 'COMPLETED':
                 lpo.log_items()
-                
-            amount_to_pay = request.json.get('amount_to_pay')
-            lpo.clear_credit(amount_to_pay)
+            else:
+                amount_to_pay = request.json.get('amount_to_pay')
+                lpo.clear_credit(amount_to_pay)
             return {"msg": "lpo updated", "lpo": schema.dump(lpo).data}
         except Exception as e:
             lpo.credit_status = 'PARTIAL'
+            if request.json.get('status') == 'COMPLETED':
+                lpo.status = 'PENDING'
             lpo.update()
             return {"msg": e.args[0]}, e.args[1] if len(e.args) > 1 else 500
 

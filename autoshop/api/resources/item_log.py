@@ -110,12 +110,8 @@ class ItemLogList(Resource):
         item_log.accounting_period = datetime.now().strftime("%Y-%m")
 
         try:
-            if ItemLog.get(reference=item_log.reference):
-                return {"msg": "The supplied reference already exists"}, 409
-
-            db.session.add(item_log)
-            db.session.commit()
+            item_log.transact()
             return {"msg": "item_log created", "item_log": schema.dump(item_log).data}, 201
         except Exception as e:
             db.session.rollback()
-            return {"msg": e.args, "exception": e.args}, 500
+            return {"msg": e.args[0]}, e.args[1] if len(e.args) > 1 else 500

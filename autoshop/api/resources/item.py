@@ -3,6 +3,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource
 
 from autoshop.commons.pagination import paginate
+from autoshop.commons.dbaccess import query
 from autoshop.extensions import db, ma
 from autoshop.models import Item, Entity, VehicleModel, ItemCategory
 from autoshop.api.resources.item_category import ItemCategorySchema
@@ -99,3 +100,55 @@ class ItemList(Resource):
         db.session.commit()
 
         return {"msg": "item created", "item": schema.dump(item).data}, 201
+
+
+class ItemEntriesResource(Resource):
+    """Single object resource
+    """
+
+    method_decorators = [jwt_required]
+
+    def get(self, item_id):
+        sql = (
+            """ 0 as entry_id,'credit' as tran_category,
+                (select date_created from item where uuid="""
+            + str(item_id)
+            + """)
+                as date_created,0 as quantity,0 as balance
+                union
+                select entry_id,tran_category,date_created,quantity,
+                (select sum(quantity) from item_ledger b where account_id="""
+            + str(item_id)
+            + """
+                and b.entry_id<=a.entry_id ) as balance from item_ledger a
+                where account_id="""
+            + str(item_id)
+            + """
+                order by entry_id desc"""
+        )
+
+        response = query(sql)
+        return response, 200
+
+class ItemEntriesList(Resource):
+    """Creation and get_all
+    """
+
+    method_decorators = [jwt_required]
+
+    def get(self):
+        sql = """ V.entry_id,account_id,B.uuid,B.name, V.reference,
+        V.date_created,quantity,amount, e.name as entity_id FROM item_ledger AS V
+        inner join item_accounts AS B on B.uuid=V.account_id
+        inner join item I on B.uuid=I.uuid
+        inner join entity e on e.uuid=I.entity_id """
+
+        if request.args.get("company") is not None:
+            where = " where entity_id='" + request.args.get("company") + "'"
+            sql = sql + where
+
+        order_by = " order by V.date_created desc,  V.entry_id desc, V.amount desc"
+        sql = sql + order_by
+
+        response = query(sql)
+        return response, 200

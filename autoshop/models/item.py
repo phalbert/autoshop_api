@@ -1,10 +1,12 @@
+import datetime
 from sqlalchemy import CheckConstraint
+from flask import current_app as app
 
 from autoshop.extensions import db
 from autoshop.models.audit_mixin import AuditableMixin
 from autoshop.models.base_mixin import BaseMixin
 from autoshop.commons.dbaccess import query
-
+from autoshop.commons.util import commas
 
 class ItemCategory(db.Model, BaseMixin, AuditableMixin):
     name = db.Column(db.String(200), unique=True, nullable=False)
@@ -88,6 +90,7 @@ class ItemLog(db.Model, BaseMixin, AuditableMixin):
 
     def __init__(self, **kwargs):
         super(ItemLog, self).__init__(**kwargs)
+        self.accounting_period = datetime.now().strftime("%Y-%m")
         self.get_uuid()
 
     def __repr__(self):
@@ -116,3 +119,71 @@ class ItemLog(db.Model, BaseMixin, AuditableMixin):
 
         data = query(sql)
         return data if data is None else data[0]["name"]
+
+    def is_valid(self):
+        """validate the object"""
+
+        if self.category not in ('sale', 'purchase'):
+            return False, {"msg": "The category {0} doesn't exist".format(self.tran_type)}, 422
+        if not Item.get(uuid=self.credit) and not Item.get(uuid=self.debit):
+            return False, {"msg": "The supplied item id does not exist"}, 422
+        if ItemLog.get(reference=self.reference):
+            return False, {"msg": "The supplied reference already exists"}, 409
+        if ItemLog.get(reference=self.cheque_number):
+            return False, {"msg": "This transaction is already reversed"}, 409
+        if self.category == "reversal" and not ItemLog.get(
+                reference=self.cheque_number
+        ):
+            return False, {"msg": "You can only reverse an existing transaction"}, 422
+
+        # check balance
+        item = Item.get(uuid=self.debit)
+        bal_after = int(item.quantity) - int(self.quantity)
+        app.logger.info(item.quantity, self.quantity)
+
+        if Item.get(uuid=self.item_id).name != 'labour' and self.category == 'sale' and float(bal_after) < 0.0:
+            return False, {
+                "msg": "Insufficient quantity on the {0} account {1}".format(item.name, commas(item.quantity))}, 409
+
+        if self.tran_type == "reversal":
+            orig = ItemLog.get(reference=self.cheque_number)
+            self.debit = orig.credit
+            self.credit = orig.debit
+            self.amount = orig.amount
+            self.entity_id = orig.entity_id
+
+        return True, self, 200
+
+    @staticmethod
+    def init_jobitem(job_item):
+        item_log = ItemLog(
+            item_id=job_item.item_id,
+            debit=job_item.item_id,
+            credit=job_item.entity_id,
+            reference=job_item.job_id,
+            category='sale',
+            quantity=job_item.quantity,
+            amount=job_item.cost,
+            unit_cost=job_item.unit_cost,
+            entity_id=job_item.entity_id,
+        )
+        valid, reason, status = item_log.is_valid()
+        if not valid:
+            raise Exception(reason.get('msg'), status)
+        return item_log
+
+    def transact(self):
+        """
+        :rtype: object
+        If a customer is invoiced, value is debited off their account onto
+        the entity account, when they make a payment
+        1. Value is debited off the `escrow` onto the customer account
+        2. Value is also moved off the entity account onto the pay type account
+
+        In the future, the payment type account ought to be created per entity
+        """
+        valid, reason, status = self.is_valid()
+        if not valid:
+            raise Exception(reason.get('msg'), status)
+
+        db.session.commit()

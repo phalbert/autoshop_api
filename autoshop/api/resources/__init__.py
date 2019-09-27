@@ -24,7 +24,7 @@ from .access_log import AccessLogResource, AccessLogList
 from .service import ServiceResource, ServiceList
 from .service_request import ServiceRequestResource, ServiceRequestList
 from .work_item import WorkItemResource, WorkItemList
-from .item import ItemResource, ItemList
+from .item import ItemResource, ItemList, ItemEntriesResource, ItemEntriesList
 from .item_category import ItemCategoryResource, ItemCategoryList
 from .employee_type import EmployeeTypeResource, EmployeeTypeList
 from .employee import EmployeeResource, EmployeeList
@@ -38,6 +38,8 @@ from .expense import ExpenseResource, ExpenseList
 from .commission_account import CommissionAccountList, CommissionAccountResource
 
 __all__ = [
+    "ItemEntriesResource",
+    "ItemEntriesList",
     "CommissionAccountList",
     "CommissionAccountResource",
     "ExpenseResource", 
