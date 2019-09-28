@@ -2,7 +2,7 @@ from .account import (
     AccountEntriesList,
     AccountEntriesResource,
     AccountList,
-    AccountResource,
+    AccountResource
 )
 from .account_type import AccountTypeList, AccountTypeResource
 from .vehicle import VehicleList, VehicleResource

@@ -13,7 +13,7 @@ from autoshop.api.resources.vendor import VendorSchema
 
 class ItemSchema(ma.ModelSchema):
 
-    entity = ma.Nested(EntitySchema, only=('name', 'address', 'email', 'phone'))
+    entity = ma.Nested(EntitySchema, only=("name", "address", "email", "phone"))
     category = ma.Nested(ItemCategorySchema)
     vendor = ma.Nested(VendorSchema)
 
@@ -91,7 +91,7 @@ class ItemList(Resource):
             return {"msg": "The supplied name already exists"}, 409
         if Item.get(code=item.code):
             return {"msg": "The supplied code already exists"}, 409
-        if item.model_id != 'ALL' and not VehicleModel.get(uuid=item.model_id):
+        if item.model_id != "ALL" and not VehicleModel.get(uuid=item.model_id):
             return {"msg": "The supplied vehicle model doesnt exist"}, 422
         if not ItemCategory.get(uuid=item.category_id):
             return {"msg": "The supplied item category doesnt exist"}, 422
@@ -128,7 +128,9 @@ class ItemEntriesResource(Resource):
         )
 
         response = query(sql)
+        app.logger.info(response)
         return response, 200
+
 
 class ItemEntriesList(Resource):
     """Creation and get_all
