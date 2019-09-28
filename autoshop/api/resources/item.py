@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, current_app as app
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource
 
@@ -73,6 +73,8 @@ class ItemList(Resource):
 
         if request.args.get("uuid") is not None:
             query = Item.query.filter_by(uuid=request.args.get("uuid"))
+        elif request.args.get("entity") is not None:
+            query = Item.query.filter_by(entity_id=request.args.get("entity"))
         else:
             query = Item.query
         return paginate(query, schema)
@@ -109,26 +111,27 @@ class ItemEntriesResource(Resource):
     method_decorators = [jwt_required]
 
     def get(self, item_id):
+
         sql = (
-            """ 0 as entry_id,'credit' as tran_category,
-                (select date_created from item where uuid="""
+            """ 0 as entry_id,'' as tran_type,'credit' as tran_category,
+                (select date_created from item where uuid='"""
             + str(item_id)
-            + """)
-                as date_created,0 as quantity,0 as balance
+            + """')
+                as date_created,0 as quantity,0 as balance
                 union
-                select entry_id,tran_category,date_created,quantity,
-                (select sum(quantity) from item_ledger b where account_id="""
+                select entry_id,'' as tran_type,tran_category,date_created,quantity,
+                (select sum(quantity) from item_ledger b where account_id='"""
             + str(item_id)
-            + """
-                and b.entry_id<=a.entry_id ) as balance from item_ledger a
-                where account_id="""
+            + """'
+                and b.entry_id<=a.entry_id ) as balance from item_ledger a
+                where account_id='"""
             + str(item_id)
-            + """
+            + """'
                 order by entry_id desc"""
         )
 
+        app.logger.info(sql)
         response = query(sql)
-        app.logger.info(response)
         return response, 200
 
 

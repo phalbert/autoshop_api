@@ -76,6 +76,8 @@ class ExpenseList(Resource):
                 query = query.filter_by(item=item)
             if from_date and to_date:
                 query = query.filter(Expense.date_created.between(from_date,to_date))
+        elif request.args.get("entity") is not None:
+            query = Expense.query.filter_by(entity_id=request.args.get("entity"))
         else:
             query = Expense.query
 

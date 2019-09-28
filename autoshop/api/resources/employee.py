@@ -77,10 +77,11 @@ class EmployeeList(Resource):
             query = Employee.query.filter_by(entity_id=request.args.get("entity"))
         elif request.args.get("phone") is not None:
             query = Employee.query.filter_by(phone=request.args.get("phone"))
-        if request.args.get("uuid") is not None:
+        elif request.args.get("uuid") is not None:
             query = Employee.query.filter_by(uuid=request.args.get("uuid"))
         else:
             query = Employee.query
+        
 
         return paginate(query.order_by(Employee.id.desc()), schema)
 

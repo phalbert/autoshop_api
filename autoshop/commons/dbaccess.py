@@ -4,6 +4,7 @@ from flask import current_app
 
 
 def query(sql):
+    current_app.logger.info(sql)
     conn = psycopg2.connect(current_app.config["SQLALCHEMY_DATABASE_URI"])
     cursor = conn.cursor()
     cursor.execute("select json_agg(t) from (SELECT " + sql + ")  t")

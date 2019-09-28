@@ -75,14 +75,14 @@ from autoshop.api.resources import (
     CommissionAccountList,
     CommissionAccountResource,
     ItemEntriesResource,
-    ItemEntriesList,
+    ItemEntriesList
 )
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
 api = Api(blueprint)
 
-api.add_resource(ItemEntriesResource, "/items_entries/<item_id>")
-api.add_resource(ItemEntriesList, "/items_entries")
+api.add_resource(ItemEntriesResource, "/items/entries/<item_id>")
+api.add_resource(ItemEntriesList, "/items/entries")
 api.add_resource(CommissionAccountResource, "/commission_accounts/<int:comm_account_id>")
 api.add_resource(CommissionAccountList, "/commission_accounts")
 api.add_resource(ExpenseResource, "/expenses/<int:expense_id>")

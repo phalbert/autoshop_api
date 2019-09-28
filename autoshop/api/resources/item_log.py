@@ -95,6 +95,8 @@ class ItemLogList(Resource):
                 query = ItemLog.query.filter_by(entity_id=request.args.get("uuid"))
         elif request.args.get("reference"):
             query = ItemLog.query.filter_by(reference=request.args.get("reference"))
+        elif request.args.get("entity") is not None:
+            query = ItemLog.query.filter_by(entity_id=request.args.get("entity"))
         else:
             query = ItemLog.query
         query = query.order_by(ItemLog.date_created.desc())

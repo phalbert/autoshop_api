@@ -12,6 +12,9 @@ class ItemCategory(db.Model, BaseMixin, AuditableMixin):
     name = db.Column(db.String(200), unique=True, nullable=False)
     description = db.Column(db.String(2000))
     parent_id = db.Column(db.String(50))
+    entity_id = db.Column(db.String(50), db.ForeignKey("entity.uuid"))
+
+    entity = db.relationship("Entity")
 
     def __init__(self, **kwargs):
         super(ItemCategory, self).__init__(**kwargs)

@@ -81,7 +81,7 @@ class CustomerList(Resource):
             query = Customer.query.filter_by(entity_id=request.args.get("entity"))
         elif request.args.get("phone") is not None:
             query = Customer.query.filter_by(phone=request.args.get("phone"))
-        if request.args.get("uuid") is not None:
+        elif request.args.get("uuid") is not None:
             query = Customer.query.filter_by(uuid=request.args.get("uuid"))
         else:
             query = Customer.query

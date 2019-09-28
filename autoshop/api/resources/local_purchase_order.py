@@ -86,6 +86,8 @@ class LocalPurchaseOrderList(Resource):
             query = LocalPurchaseOrder.query.filter_by(reference=request.args.get("reference"))
         elif request.args.get("code"):
             query = LocalPurchaseOrder.query.filter_by(uuid=request.args.get("code"))
+        elif request.args.get("entity") is not None:
+            query = LocalPurchaseOrder.query.filter_by(entity_id=request.args.get("entity"))
         else:
             query = LocalPurchaseOrder.query
         query = query.order_by(LocalPurchaseOrder.date_created.desc())

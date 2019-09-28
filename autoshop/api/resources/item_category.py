@@ -52,7 +52,10 @@ class ItemCategoryList(Resource):
 
     def get(self):
         schema = ItemCategorySchema(many=True)
-        query = ItemCategory.query
+        if request.args.get("entity") is not None:
+            query = ItemCategory.query.filter_by(entity_id=request.args.get("entity"))
+        else:
+            query = ItemCategory.query
         return paginate(query, schema)
 
     def post(self):
