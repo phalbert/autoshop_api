@@ -26,7 +26,7 @@ inflection==0.3.1
 itsdangerous==1.1.0
 Jinja2==2.10.1
 loguru==0.3.2
-Mako==1.0.13
+Mako==1.2.2
 MarkupSafe==1.1.1
 marshmallow==2.19.5
 marshmallow-sqlalchemy==0.17.0
